@@ -1,0 +1,20 @@
+# Entorno virtual
+venv/
+.env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python
+_pycache_/
+*.pyc
+
+# Sistema
+.DS_Store
+
+
+#Datos sensibles
+data/
+*.xlsx
+*.csv
+*.xls

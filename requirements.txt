@@ -1,0 +1,16 @@
+# Entorno base
+python==3.12.3
+
+# Análisis de datos
+pandas==3.0.0
+numpy==2.4.2
+
+# Visualización
+matplotlib==3.10.8
+
+# Lectura / escritura de Excel
+openpyxl==3.1.5
+xlrd==2.0.2
+
+# Entorno de análisis
+jupyter
