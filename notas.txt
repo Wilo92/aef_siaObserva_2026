@@ -1,0 +1,10 @@
+Orden	Sección	Propósito
+1	Header / Markdown	Título del proyecto, descripción del objetivo de auditoría y autores.
+2	Imports	Todas las librerías (pandas, numpy, matplotlib) van aquí. Nunca importes librerías a mitad del notebook.
+3	Configuraciones	Configuración de visualización de pandas (ej. cuántos decimales mostrar) o rutas de carpetas.
+4	Ingesta (Data Loading)	Lectura de archivos Excel, CSV o conexiones a bases de datos SQL/APIs.
+5	EDA (Análisis Exploratorio)	Entender qué datos llegaron: df.info(), df.describe(), revisión de nulos y tipos de datos.
+6	Preprocesamiento / Limpieza	Conversión de fechas, manejo de valores faltantes, eliminación de duplicados.
+7	Análisis / Core de Auditoría	Aplicación de filtros, cruces de tablas y cálculos de indicadores (KPIs).
+8	Visualización / Hallazgos	Gráficos y tablas resumen que responden a los objetivos iniciales.
+9	Exportación	Guardar los resultados limpios en la carpeta data/processed/ o generar informes.

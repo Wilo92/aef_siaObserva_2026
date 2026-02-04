@@ -14,7 +14,7 @@ _pycache_/
 
 
 #Datos sensibles
-data/
+data/raw
 *.xlsx
 *.csv
 *.xls
