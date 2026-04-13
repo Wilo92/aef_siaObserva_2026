@@ -12,9 +12,3 @@ _pycache_/
 # Sistema
 .DS_Store
 
-
-#Datos sensibles
-data/raw
-*.xlsx
-*.csv
-*.xls
