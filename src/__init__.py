@@ -16,4 +16,5 @@ from .analysis import (
     analizar_por_modalidad,
     analizar_por_origen_recursos,
     analizar_ranking_entidades,
+    analizar_rendicion_extemporanea,
 )
