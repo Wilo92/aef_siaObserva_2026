@@ -1,12 +1,13 @@
-# Auditoría Analítica de la Contratación Pública 2025  
+# Auditoría a la Contratación Pública 2025 - 53 sujetos de control.  
 ## Contraloría General de Risaralda - Plataforma SIA Observa
 
 ## Descripción general
 
-Este proyecto desarrolla un análisis técnico de la contratación pública reportada por los sujetos de control en la Plataforma SIA Observa, con énfasis en la vigencia 2025.  
-El trabajo se implementa en Python mediante Jupyter Notebook y módulos de apoyo para limpieza, estandarización y análisis de datos contractuales.
+Este proyecto realiza un análisis técnico de la contratación pública reportada por los sujetos de control en la plataforma SIA Observa, con énfasis en la vigencia 2025.
 
-El propósito institucional es fortalecer el control fiscal, mejorar la trazabilidad de la información contractual y aportar evidencia para la priorización de actuaciones auditoras.
+El desarrollo se implementa en Python, utilizando Jupyter Notebook para el análisis exploratorio y módulos especializados para la limpieza, estandarización y procesamiento de los datos.
+
+Su propósito es fortalecer el control fiscal, mejorar la trazabilidad de la información contractual y generar insumos que apoyen la priorización de procesos de auditoría.
 
 ## Objetivo general
 
@@ -14,24 +15,26 @@ Analizar el comportamiento de la contratación pública reportada en SIA Observa
 
 ## Objetivos específicos
 
-- Estandarizar y depurar los registros contractuales para mejorar su comparabilidad analítica.
-- Caracterizar la contratación por modalidad, tipo de contrato, entidad, origen de recursos y temporalidad.
-- Identificar contratos con adiciones relevantes como insumo de alertas tempranas de auditoría.
-- Evaluar comportamientos de rendición extemporánea y su distribución por entidad.
-- Generar salidas tabulares y visuales que faciliten la lectura técnica y la toma de decisiones.
+- Estandarizar y depurar los registros contractuales para mejorar su calidad y comparabilidad analítica.
+- Caracterizar la contratación pública según modalidad, tipo de contrato, entidad, origen de recursos y comportamiento temporal.
+- Identificar contratos con adiciones relevantes como insumo para la generación de alertas tempranas en procesos de auditoría.
+- Evaluar los comportamientos de rendición extemporánea y su distribución por entidad.
+- Generar salidas tabulares y visuales que faciliten la interpretación técnica de la información y apoyen la toma de decisiones.
+- Producir conjuntos de datos limpios y estructurados, listos para su consumo en herramientas de visualización como Power BI.
+- Identificar los contratistas con mayor número de contratos, así como los montos y cuantías asociadas a su actividad contractual.
 
 ## Alcance del análisis
 
-- **Cobertura temática:** contratación reportada en SIA Observa (informes básico y extendido).
-- **Cobertura temporal:** vigencia contractual 2025 (procesamiento y análisis ejecutados en 2026).
-- **Cobertura analítica:** exploración descriptiva, agregaciones por variables clave, estandarización de categorías y visualización de resultados.
-- **Propósito de uso:** apoyo al ejercicio auditor y a la transparencia institucional.
+- **Cobertura temática:** Información de contratación pública reportada en la plataforma SIA Observa, incluyendo los informes básico y extendido.
+- **Cobertura temporal:** Vigencia contractual 2025 (con procesamiento y análisis realizados durante el año 2026).
+- **Cobertura analítica:** Análisis descriptivo de la información, incluyendo agregaciones por variables clave, estandarización de categorías y generación de visualizaciones.
+- **Propósito de uso:** Apoyar el ejercicio auditor y fortalecer la transparencia en la gestión contractual.
 
 Este ejercicio no sustituye la revisión integral de legalidad contractual ni constituye, por sí mismo, un pronunciamiento fiscal definitivo.
 
 ## Fuente de datos
 
-La fuente principal corresponde a los reportes de contratación descargados desde **SIA Observa**, plataforma de rendición de información contractual de los sujetos de control.
+La fuente principal corresponde a los reportes de contratación descargados desde **SIA Observa**, plataforma de rendición de información contractual de la Contraloria General del Risaralda para los 55 sujetos de control.
 
 ### Insumos usados en el proyecto
 
@@ -66,31 +69,30 @@ La metodología combina prácticas de analítica de datos con enfoque de auditor
 - Análisis por tipo de entidad y ranking por monto contratado.
 - Análisis por origen de recursos (categorías estandarizadas).
 - Identificación de contratos con adiciones y clasificación de alertas.
-- Medición de rendición extemporánea (días de diferencia entre creación y acta de inicio) y resumen por entidad.
+- Medición de rendición extemporánea (días de diferencia entre creación en el sistema y acta de inicio del contrato) y resumen por entidad.
 
-## Principales hallazgos
 
-Los hallazgos concretos dependen de la ejecución del notebook con el corte de datos vigente. Con base en la lógica implementada, los resultados se reportan bajo una redacción de auditoría como la siguiente:
 
-- Se evidenció concentración de valor contratado en un conjunto acotado de entidades, lo que orienta focos de seguimiento fiscal.
-- Se identificó una participación diferenciada entre modalidades de contratación, con comportamiento heterogéneo en monto y frecuencia.
-- Se observó comportamiento atípico en contratos con adiciones elevadas, clasificados como alertas para priorización de revisión.
-- Se evidenció presencia de rendición extemporánea en registros contractuales, con variaciones en magnitud entre entidades.
-- Se identificaron inconsistencias de nomenclatura y clasificación en variables contractuales, mitigadas parcialmente mediante estandarización.
+## Resultados del análisis
 
-> Nota: este repositorio no incorpora en el README cifras cerradas para evitar desactualización o inferencias sin validación del último corte procesado.
+Los resultados del análisis se generan a partir de la ejecución del notebook y los scripts incluidos en este repositorio, utilizando el conjunto de datos correspondiente al corte procesado.
 
-## Limitaciones del análisis
+Las salidas incluyen:
 
-- Dependencia de la completitud y calidad de la información reportada por cada sujeto de control.
-- Posibles cambios posteriores en SIA Observa no reflejados en el corte descargado.
-- El enfoque es descriptivo y exploratorio; no reemplaza procedimientos auditorios de fondo (jurídico, financiero y técnico).
-- La detección de alertas no implica automáticamente hallazgo fiscal, disciplinario o penal.
+-Tablas agregadas por entidad, modalidad de contratación y tipo de contrato.
+-Identificación de contratos con adiciones relevantes.
+-Análisis de comportamientos de rendición extemporánea.
+-Caracterización de contratistas según número de contratos y montos asociados.
+-Visualizaciones que apoyan la interpretación de los datos.
+
+Nota: Los hallazgos oficiales, conclusiones y análisis jurídico se presentan en el informe técnico en PDF elaborado en conjunto con el equipo auditor.
+
+
 
 ## Estructura del proyecto
 
 ```text
-AUDITORIA SIA PARA CURSOR/
+AUDITORIA_SIA/
 |- notebooks/
 |  `- analisis_contratacion_2026.ipynb
 |- data/
@@ -151,18 +153,13 @@ Luego abrir y ejecutar secuencialmente:
 
 ## Conclusiones
 
-El proyecto proporciona una base analítica reproducible para el seguimiento de la contratación pública reportada en SIA Observa, con enfoque en control fiscal preventivo y transparencia.  
+El proyecto proporciona una base analítica reproducible para el seguimiento de la contratación pública reportada en SIA Observa.  
 La estandarización de variables y la generación de alertas facilitan la identificación de patrones relevantes para priorizar actuaciones auditoras y robustecer la toma de decisiones institucionales.
 
-## Posibles líneas futuras de análisis
 
-- Incorporar series históricas multivigencia para evaluar tendencias y cambios estructurales.
-- Integrar indicadores de riesgo por entidad, modalidad y tipo de contrato.
-- Cruzar información contractual con ejecución presupuestal y resultados de auditorías previas.
-- Implementar tableros interactivos para monitoreo continuo por dependencias misionales.
-- Profundizar en análisis de redes de contratistas y concentración de proveedores.
+## Autor
 
-
-## Creado por
-Wilmer Fidel Restrepo Orrego.
-Tecnico Operativo 314-05
+**Wilmer Fidel Restrepo Orrego**  
+Técnico Operativo – Código 314-05  
+Contraloria General del Risaralda
+Mayo de 2026
