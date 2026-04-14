@@ -127,13 +127,11 @@ def estandarizar_modalidades(df):
         "INVITACION DIRECTA": "INVITACION CERRADA",
         "ACUERDOS MARCO DE PRECIOS": "CONTRATACION DIRECTA",
         "INVITACION PUBLICA": "LICITACIONES PUBLICAS",
-        "CONTRATACION CON ENTIDADES PRIVADAS SIN ANIMO DE LUCRO A LA QUE HACE REFERENCIA EL ART.355 CP.": "CONTRATACION DIRECTA",
+        "CONTRATACION CON ENTIDADES PRIVADAS SIN ANIMO DE LUCRO A LA QUE HACE REFERENCIA EL ART. 355 CP.": "CONTRATACION DIRECTA",
     }
 
     df["MODALIDAD_ESTANDAR"] = (
-        df["MODALIDAD_CONTRATACION"]
-        .map(mapeo)
-        .fillna(df["MODALIDAD_CONTRATACION"])
+        df["MODALIDAD_CONTRATACION"].map(mapeo).fillna(df["MODALIDAD_CONTRATACION"])
     )
 
     return df
@@ -149,11 +147,11 @@ def estandarizar_causales(df):
 
     mapeo_causales = {
         "SUBASTA INVERSA - LICITACION PUBLICA": "LICITACION PUBLICA",
-        "ADQUISICION O SUMINISTRO DE BIENES Y SERVICIOS DE CARACTERISTICAS TECNICAS UNIFORMES": "SUBASTA INVERSA",##REVISAR
+        "ADQUISION O SUMINISTRO DE BIENES Y SERVICIOS DE CARACTERISTICAS TECNICAS UNIFORMES Y DE COMUN UTILIZACION (PROCEDIMIENTO: SIUBASTA INVERSA, ACUERDO MARCO DE PRECIOS, BOLSA DE PRODUCTOS)": "SUBASTA INVERSA", 
         "TIENDA VIRTUAL DEL ESTADO": "ACUERDO MARCO DE PRECIOS",
         "TIENDA VIRTUAL DEL ESTADO COLOMBIANO": "ACUERDO MARCO DE PRECIOS",
         "CONVENIOS INTERADMINISTRATIVOS": "CONTRATOS INTERADMINISTRATIVOS",
-        "CONVENIOS DE COOPERACION INTERINSTITUCIONAL": "CONTRATOS INTERADMINISTRATIVOS",##REVISAR
+        "CONVENIOS DE COOPERACION INTERINTERISTITUCIONAL": "CONTRATOS INTERADMINISTRATIVOS",  
         "CONVENIOS DE ASOCIACION ESAL": "AQUELLOS DE LOS QUE TRATA EL ARTICULO 355 DE LA CONSTITUCION POLITICA DE COLOMBIA",
         "SELECCION CUANDO HAY MAS DE UNA ESAL": "AQUELLOS DE LOS QUE TRATA EL ARTICULO 355 DE LA CONSTITUCION POLITICA DE COLOMBIA",
         "PRESTACION DE SERVICIOS - (SE ELIMINARA)": "PRESTACION DE SERVICIOS PROFESIONALES Y APOYO",
@@ -163,6 +161,7 @@ def estandarizar_causales(df):
         "ORDEN DE SERVICIO": "SUMINISTROS",
         "ABIERTO": "OTROS",
         "MANUAL DE CONTRATACION": "MANUAL DE CONTRATACION",
+        "AQUELLOS DE LOS QUE TRATA EL ARTICULO 355 DE LA CONSTITUCION POLITICA": "AQUELLOS DE LOS QUE TRATA EL ARTICULO 355 DE LA CONSTITUCION POLITICA DE COLOMBIA",
     }
 
     col_limpia = df["CAUSAL_CONTRATO"]
@@ -192,19 +191,14 @@ def estandarizar_recursos_v2(df):
         if pd.isna(texto):
             return "NO REPORTADO"
 
-        # 🔥 1. Normalización completa
         t = str(texto).upper().strip()
 
-        # Quitar tildes (CLAVE)
         t = unicodedata.normalize("NFKD", t).encode("ascii", "ignore").decode("utf-8")
 
-        # Limpiar espacios múltiples
         t = re.sub(r"\s+", " ", t)
 
-        # 🔥 2. Tokenización inteligente
         tokens = set(t.split())
 
-        # 🔥 3. Flags robustos
         tiene_sgp = "SGP" in tokens
         tiene_sgr = "SGR" in tokens or "REGALIA" in tokens or "REGALIAS" in tokens
         tiene_nacion = "NACION" in tokens
@@ -224,35 +218,26 @@ def estandarizar_recursos_v2(df):
             )
         )
 
-        # =========================
-        # 🔥 4. REGLAS DEFINITIVAS
-        # =========================
-
-        # 1. SGR manda sobre todo
         if tiene_sgr:
             if tiene_propio:
                 return "RECURSOS PROPIOS / NACION SGR"
             return "NACION SGR"
 
-        # 2. SGP manda
         if tiene_sgp:
             if tiene_propio:
                 return "RECURSOS PROPIOS / NACION SGP"
             return "NACION SGP"
 
-        # 3. Nación sin SGP explícito
         if tiene_nacion:
             if tiene_propio:
                 return "RECURSOS PROPIOS / NACION SGP"
             return "NACION SGP"
 
-        # 4. Otros (solo si no hay nada más fuerte)
         if tiene_otros:
             if tiene_propio:
                 return "RECURSOS PROPIOS"
             return "OTROS"
 
-        # 5. Solo propios
         if tiene_propio:
             return "RECURSOS PROPIOS"
 
