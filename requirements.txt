@@ -12,3 +12,51 @@ ipykernel==6.29.5
 
 # Nota: Proyecto desarrollado con Visual Studio Code.
 # El notebook es solo para análisis exploratorio de datos.
+
+
+
+
+
+def estandarizar_recursos_v2(df):
+    if "ORIGEN_RECURSOS" not in df.columns:
+        return df
+
+    def mapeo_profundo(texto):
+        if pd.isna(texto):
+            return "NO REPORTADO"
+        t = str(texto).upper().strip()
+
+        tiene_sgp = "SGP" in t
+        tiene_sgr = "SGR" in t or "REGALIAS" in t
+        tiene_nacion = "NACION" in t and not (tiene_sgp or tiene_sgr)
+
+        tiene_propio = any(
+            p in t
+            for p in [
+                "PROPIOS",
+                "DEPARTAMENTALES",
+                "MUNICIPALES",
+                "MIXTOS",
+                "EMPRESTITOS",
+            ]
+        )
+
+        if tiene_sgp and tiene_propio:
+            return "RECURSOS PROPIOS / NACION SGP"
+
+        if tiene_sgr and tiene_propio:
+            return "RECURSOS PROPIOS / NACION SGR"
+
+        if tiene_sgr:
+            return "NACION SGR"
+
+        if tiene_sgp or tiene_nacion:
+            return "NACION SGP"
+
+        if "OTROS" in t:
+            return "OTROS"
+
+        return "RECURSOS PROPIOS"
+
+    df["ORIGEN_RECURSOS_ESTANDAR"] = df["ORIGEN_RECURSOS"].apply(mapeo_profundo)
+    return df

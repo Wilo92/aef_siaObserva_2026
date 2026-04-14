@@ -122,15 +122,19 @@ def estandarizar_modalidades(df):
         return df
 
     mapeo = {
-        "SIN_OFERTAS": "REGIMEN_ESPECIAL",
-        "CON_OFERTAS": "REGIMEN_ESPECIAL",
-        "INVITACION_DIRECTA": "INVITACION_CERRADA",
-        "ACUERDOS_MARCO_DE_PRECIOS": "CONTRATACION_DIRECTA",
-        "INVITACION_PUBLICA": "LICITACIONES_PUBLICAS",
-        "CONTRATACION_CON_ENTIDADES_PRIVADAS_SIN_ANIMO_DE_LUCRO_A_LA_QUE_HACE_REFERENCIA_EL_ART_355_CP": "CONTRATACION_DIRECTA",
+        "SIN OFERTAS": "REGIMEN ESPECIAL",
+        "CON OFERTAS": "REGIMEN ESPECIAL",
+        "INVITACION DIRECTA": "INVITACION CERRADA",
+        "ACUERDOS MARCO DE PRECIOS": "CONTRATACION DIRECTA",
+        "INVITACION PUBLICA": "LICITACIONES PUBLICAS",
+        "CONTRATACION CON ENTIDADES PRIVADAS SIN ANIMO DE LUCRO A LA QUE HACE REFERENCIA EL ART.355 CP.": "CONTRATACION DIRECTA",
     }
 
-    df["MODALIDAD_ESTANDAR"] = df["MODALIDAD_CONTRATACION"].replace(mapeo)
+    df["MODALIDAD_ESTANDAR"] = (
+        df["MODALIDAD_CONTRATACION"]
+        .map(mapeo)
+        .fillna(df["MODALIDAD_CONTRATACION"])
+    )
 
     return df
 
@@ -144,25 +148,26 @@ def estandarizar_causales(df):
         return df
 
     mapeo_causales = {
-        "SUBASTA_INVERSA_LICITACION_PUBLICA": "LICITACION_PUBLICA",
-        "ADQUISICION_O_SUMINISTRO_DE_BIENES_Y_SERVICIOS_DE_CARACTERISTICAS_TECNICAS_UNIFORMES": "SUBASTA_INVERSA",
-        "TIENDA_VIRTUAL_DEL_ESTADO": "ACUERDO_MARCO_DE_PRECIOS",
-        "TIENDA_VIRTUAL_DEL_ESTADO_COLOMBIANO": "ACUERDO_MARCO_DE_PRECIOS",
-        "CONVENIOS_INTERADMINISTRATIVOS": "CONTRATOS_INTERADMINISTRATIVOS",
-        "CONVENIOS_DE_COOPERACION_INTERINTERISTITUCIONAL": "CONTRATOS_INTERADMINISTRATIVOS",
-        "CONVENIOS_DE_ASOCIACION_ESAL": "AQUELLOS_DE_LOS_QUE_TRATA_EL_ARTICULO_355_DE_LA_CONSTITUCION_POLITICA_DE_COLOMBIA",
-        "SELECCION_CUANDO_HAY_MAS_DE_UNA_ESAL": "AQUELLOS_DE_LOS_QUE_TRATA_EL_ARTICULO_355_DE_LA_CONSTITUCION_POLITICA_DE_COLOMBIA",
-        "PRESTACION_DE_SERVICIOS_(SE_ELIMINARA)": "PRESTACION_DE_SERVICIOS_PROFESIONALES_Y_APOYO",
-        "SIN_PLURALIDAD_DE_OFERENTES": "MANUAL_DE_CONTRATACION",
-        "DESARROLLO_ACTIVIDAD_CIENTIFICA_Y_TECNOLOGICA": "OTRAS_FORMAS_DE_CONTRATACION_DIRECTA",
+        "SUBASTA INVERSA - LICITACION PUBLICA": "LICITACION PUBLICA",
+        "ADQUISICION O SUMINISTRO DE BIENES Y SERVICIOS DE CARACTERISTICAS TECNICAS UNIFORMES": "SUBASTA INVERSA",##REVISAR
+        "TIENDA VIRTUAL DEL ESTADO": "ACUERDO MARCO DE PRECIOS",
+        "TIENDA VIRTUAL DEL ESTADO COLOMBIANO": "ACUERDO MARCO DE PRECIOS",
+        "CONVENIOS INTERADMINISTRATIVOS": "CONTRATOS INTERADMINISTRATIVOS",
+        "CONVENIOS DE COOPERACION INTERINSTITUCIONAL": "CONTRATOS INTERADMINISTRATIVOS",##REVISAR
+        "CONVENIOS DE ASOCIACION ESAL": "AQUELLOS DE LOS QUE TRATA EL ARTICULO 355 DE LA CONSTITUCION POLITICA DE COLOMBIA",
+        "SELECCION CUANDO HAY MAS DE UNA ESAL": "AQUELLOS DE LOS QUE TRATA EL ARTICULO 355 DE LA CONSTITUCION POLITICA DE COLOMBIA",
+        "PRESTACION DE SERVICIOS - (SE ELIMINARA)": "PRESTACION DE SERVICIOS PROFESIONALES Y APOYO",
+        "SIN PLURALIDAD DE OFERENTES": "MANUAL DE CONTRATACION",
+        "DESARROLLO ACTIVIDAD CIENTIFICA Y TECNOLOGICA": "OTRAS FORMAS DE CONTRATACION DIRECTA",
+        "ORDEN DE COMPRA": "SUMINISTROS",
+        "ORDEN DE SERVICIO": "SUMINISTROS",
         "ABIERTO": "OTROS",
-        "MANUAL_DE_CONTRATACION": "MANUAL_DE_CONTRATACION",
-        "MANUAL_DE_CONTRATACION": "MANUAL_DE_CONTRATACION",
-        "ORDEN_DE_COMPRA": "SUMINISTROS",
-        "ORDEN_DE_SERVICIO": "SUMINISTROS",
+        "MANUAL DE CONTRATACION": "MANUAL DE CONTRATACION",
     }
 
-    df["CAUSAL_ESTANDAR"] = df["CAUSAL_CONTRATO"].replace(mapeo_causales)
+    col_limpia = df["CAUSAL_CONTRATO"]
+
+    df["CAUSAL_ESTANDAR"] = col_limpia.map(mapeo_causales).fillna(col_limpia)
 
     return df
 
@@ -174,6 +179,11 @@ def estandarizar_causales(df):
 # la consistencia y el análisis de los datos.
 
 
+import re
+import unicodedata
+import pandas as pd
+
+
 def estandarizar_recursos_v2(df):
     if "ORIGEN_RECURSOS" not in df.columns:
         return df
@@ -181,39 +191,73 @@ def estandarizar_recursos_v2(df):
     def mapeo_profundo(texto):
         if pd.isna(texto):
             return "NO REPORTADO"
+
+        # 🔥 1. Normalización completa
         t = str(texto).upper().strip()
 
-        tiene_sgp = "SGP" in t
-        tiene_sgr = "SGR" in t or "REGALIAS" in t
-        tiene_nacion = "NACION" in t and not (tiene_sgp or tiene_sgr)
+        # Quitar tildes (CLAVE)
+        t = unicodedata.normalize("NFKD", t).encode("ascii", "ignore").decode("utf-8")
 
-        tiene_propio = any(
-            p in t
-            for p in [
-                "PROPIOS",
-                "DEPARTAMENTALES",
-                "MUNICIPALES",
-                "MIXTOS",
-                "EMPRESTITOS",
-            ]
+        # Limpiar espacios múltiples
+        t = re.sub(r"\s+", " ", t)
+
+        # 🔥 2. Tokenización inteligente
+        tokens = set(t.split())
+
+        # 🔥 3. Flags robustos
+        tiene_sgp = "SGP" in tokens
+        tiene_sgr = "SGR" in tokens or "REGALIA" in tokens or "REGALIAS" in tokens
+        tiene_nacion = "NACION" in tokens
+        tiene_otros = "OTROS" in tokens
+
+        tiene_propio = (
+            "PROPIOS" in tokens
+            or "RECURSOS PROPIOS" in t
+            or any(
+                p in tokens
+                for p in [
+                    "DEPARTAMENTALES",
+                    "MUNICIPALES",
+                    "MIXTOS",
+                    "EMPRESTITOS",
+                ]
+            )
         )
 
-        if tiene_sgp and tiene_propio:
-            return "RECURSOS PROPIOS / NACION SGP"
+        # =========================
+        # 🔥 4. REGLAS DEFINITIVAS
+        # =========================
 
-        if tiene_sgr and tiene_propio:
-            return "RECURSOS PROPIOS / NACION SGR"
-
+        # 1. SGR manda sobre todo
         if tiene_sgr:
+            if tiene_propio:
+                return "RECURSOS PROPIOS / NACION SGR"
             return "NACION SGR"
 
-        if tiene_sgp or tiene_nacion:
+        # 2. SGP manda
+        if tiene_sgp:
+            if tiene_propio:
+                return "RECURSOS PROPIOS / NACION SGP"
             return "NACION SGP"
 
-        if "OTROS" in t:
+        # 3. Nación sin SGP explícito
+        if tiene_nacion:
+            if tiene_propio:
+                return "RECURSOS PROPIOS / NACION SGP"
+            return "NACION SGP"
+
+        # 4. Otros (solo si no hay nada más fuerte)
+        if tiene_otros:
+            if tiene_propio:
+                return "RECURSOS PROPIOS"
             return "OTROS"
 
-        return "RECURSOS PROPIOS"
+        # 5. Solo propios
+        if tiene_propio:
+            return "RECURSOS PROPIOS"
+
+        return "OTROS"
 
     df["ORIGEN_RECURSOS_ESTANDAR"] = df["ORIGEN_RECURSOS"].apply(mapeo_profundo)
+
     return df

@@ -21,4 +21,6 @@ from .analysis import (
     analizar_rendicion_extemporanea,
     obtener_resumen_modalidad,
     resumen_extemporaneos_por_entidad,
+    calcular_duracion_vigencia,
+
 )

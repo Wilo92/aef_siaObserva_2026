@@ -169,8 +169,6 @@ def analizar_ranking_entidades(df):
     return resumen.sort_values(by="VALOR_TOTAL", ascending=False)
 
 
-
-
 def analizar_rendicion_extemporanea(df):
     """
     Filtra contratos por estado 'RENDIDO EXTEMPORANEO' y calcula los días de retraso.
@@ -181,21 +179,43 @@ def analizar_rendicion_extemporanea(df):
 
     # 2. Convertir a datetime
     df_ext["FECHA_CREACION"] = pd.to_datetime(df_ext["FECHA_CREACION"], errors="coerce")
-    df_ext["FECHA_ACTA_DE_INICIO"] = pd.to_datetime(df_ext["FECHA_ACTA_DE_INICIO"], errors="coerce")
+    df_ext["FECHA_ACTA_DE_INICIO"] = pd.to_datetime(
+        df_ext["FECHA_ACTA_DE_INICIO"], errors="coerce"
+    )
 
-    # 3. Calcular días (Fecha Creación - Fecha Inicio) 
+    # 3. Calcular días (Fecha Creación - Fecha Inicio)
     # Si se rindió después del inicio, esta resta da los días de "demora" en el registro
-    df_ext["DIAS_EXTEMPORANEIDAD"] = (df_ext["FECHA_CREACION"] - df_ext["FECHA_ACTA_DE_INICIO"]).dt.days
+    df_ext["DIAS_EXTEMPORANEIDAD"] = (
+        df_ext["FECHA_CREACION"] - df_ext["FECHA_ACTA_DE_INICIO"]
+    ).dt.days
 
     return df_ext
+
 
 def resumen_extemporaneos_por_entidad(df_calculado):
     """
     Crea un resumen agrupado por entidad.
     """
-    resumen = df_calculado.groupby("ENTIDAD").agg(
-        TOTAL_CONTRATOS_EXTEMPORANEOS=('CODIGO_CONTRATO', 'count'),
-        PROMEDIO_DIAS_RETRASO=('DIAS_EXTEMPORANEIDAD', 'mean')
-    ).reset_index().sort_values(by="TOTAL_CONTRATOS_EXTEMPORANEOS", ascending=False)
-    
+    resumen = (
+        df_calculado.groupby("ENTIDAD")
+        .agg(
+            TOTAL_CONTRATOS_EXTEMPORANEOS=("CODIGO_CONTRATO", "count"),
+            PROMEDIO_DIAS_RETRASO=("DIAS_EXTEMPORANEIDAD", "mean"),
+        )
+        .reset_index()
+        .sort_values(by="TOTAL_CONTRATOS_EXTEMPORANEOS", ascending=False)
+    )
+
     return resumen
+
+
+def calcular_duracion_vigencia(df):
+
+    df = df.copy()
+
+    df["DURACION_REAL"] = (df["FECHA_TERMINACION"] - df["FECHA_ACTA_DE_INICIO"]).dt.days
+
+    df["VIGENCIA"] = (
+        pd.to_numeric(df["VIGENCIA"], errors="coerce").fillna(2025).astype("Int64")
+    )
+    return df

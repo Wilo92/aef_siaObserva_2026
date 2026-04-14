@@ -19,7 +19,6 @@ def get_library_versions():
 
     versions = {}
 
-    # manejo de errores
     for name, lib in libraries.items():
         try:
             versions[name] = lib.__version__
@@ -27,3 +26,27 @@ def get_library_versions():
             versions[name] = "libreria no instalada"
 
     return versions
+
+
+# Prepara y exporta DataFrames para consumo en Power BI/Excel.
+
+
+def exportar_para_bi(dfs_dict, path):
+
+    import os
+
+    os.makedirs(path, exist_ok=True)
+
+    for nombre, df in dfs_dict.items():
+        
+        df_export = df.copy()
+
+      
+        cols_fecha = df_export.select_dtypes(include=["datetime64"]).columns
+        for col in cols_fecha:
+            df_export[col] = df_export[col].dt.strftime("%Y-%m-%d")
+
+        
+        full_path = os.path.join(path, f"{nombre}.csv")
+        df_export.to_csv(full_path, index=False, encoding="utf-8-sig", sep=";")
+        print(f"Exportado: {nombre}.csv")
