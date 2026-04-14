@@ -2,19 +2,20 @@ import pandas as pd
 import unicodedata
 
 
+# Esta funcion Limpia y estandariza textos de las muestras de auditoria
+# maneja nulos, convierte algunos datos a string como nit o numero de cedula
+# elimina tildes y caracteres especiales
+# normaliza a mayúsculas y, si es cabecera, formatea el texto como nombre de columna válido.
 def limpiar_texto_auditoria(texto, es_cabecera=False):
-    # Si es nulo de una vez devolvemos None
+
     if pd.isna(texto):
         return None
 
-    # Convertimos a string de entrada para no fallar con los NIT numéricos
     texto = str(texto).strip()
 
-    # Si después de convertir a string está vacío
     if texto == "":
         return None
 
-    # El resto de tu lógica de limpieza (Ñ, tildes, etc.)
     texto = texto.replace("Ñ", "NH").replace("ñ", "nh")
     texto = (
         unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode("utf-8")
@@ -27,6 +28,8 @@ def limpiar_texto_auditoria(texto, es_cabecera=False):
     return texto
 
 
+# Aplica y estandariza tipos de datos a un DataFrame según un mapeo definido, limpiando textos
+# convirtiendo valores numéricos y formateando fechas para asegurar consistencia en el análisis.
 def aplicar_tipos_datos(df, mapeo_tipos):
 
     df.columns = [limpiar_texto_auditoria(col, es_cabecera=True) for col in df.columns]
@@ -59,6 +62,8 @@ def aplicar_tipos_datos(df, mapeo_tipos):
     return df
 
 
+# Diccionarios de configuración donde se definen el tipo de dato que se espera por cada columna.
+# se utilizan para estandarizar y transformar la información del DataFrame durante el proceso de limpieza.
 TIPOS_BASICO = {
     "TIPO_DE_ENTIDAD": "str",
     "NIT": "str",
@@ -108,14 +113,14 @@ TIPOS_EXTENDIDO = {
 }
 
 
+# Estandariza los valores de la columna 'MODALIDAD_CONTRATACION'
+# mapeándolos a categorías unificadas en 'MODALIDAD_ESTANDAR'
+# para facilitar el análisis y la consistencia de la información.
 def estandarizar_modalidades(df):
-    """
-    Estandariza la columna MODALIDAD_CONTRATACION según las reglas de auditoría.
-    """
+
     if "MODALIDAD_CONTRATACION" not in df.columns:
         return df
 
-    # Definimos las reglas de la imagen
     mapeo = {
         "SIN_OFERTAS": "REGIMEN_ESPECIAL",
         "CON_OFERTAS": "REGIMEN_ESPECIAL",
@@ -125,53 +130,48 @@ def estandarizar_modalidades(df):
         "CONTRATACION_CON_ENTIDADES_PRIVADAS_SIN_ANIMO_DE_LUCRO_A_LA_QUE_HACE_REFERENCIA_EL_ART_355_CP": "CONTRATACION_DIRECTA",
     }
 
-    # IMPORTANTE: Como ya pasamos el limpiador de texto (acentos, espacios, etc.)
-    # debemos asegurarnos que las llaves del diccionario coincidan con el texto limpio.
-
-    # Aplicamos la transformación
     df["MODALIDAD_ESTANDAR"] = df["MODALIDAD_CONTRATACION"].replace(mapeo)
 
     return df
 
 
+# Estandariza los valores de la columna 'CAUSAL_CONTRATO' mediante un mapeo
+# de categorías homogéneas, generando la columna 'CAUSAL_ESTANDAR' para
+# facilitar el análisis, la depuración y la consistencia de los datos.
 def estandarizar_causales(df):
-    """
-    Estandariza la columna CAUSAL_CONTRATO según la tabla de equivalencias de la imagen.
-    """
+
     if "CAUSAL_CONTRATO" not in df.columns:
         return df
 
-    # Diccionario de equivalencias (Mapeo de Causales)
     mapeo_causales = {
-        # Licitación y Subasta
         "SUBASTA_INVERSA_LICITACION_PUBLICA": "LICITACION_PUBLICA",
         "ADQUISICION_O_SUMINISTRO_DE_BIENES_Y_SERVICIOS_DE_CARACTERISTICAS_TECNICAS_UNIFORMES": "SUBASTA_INVERSA",
-        # Tienda Virtual / Acuerdos Marco
         "TIENDA_VIRTUAL_DEL_ESTADO": "ACUERDO_MARCO_DE_PRECIOS",
         "TIENDA_VIRTUAL_DEL_ESTADO_COLOMBIANO": "ACUERDO_MARCO_DE_PRECIOS",
-        # Interadministrativos
         "CONVENIOS_INTERADMINISTRATIVOS": "CONTRATOS_INTERADMINISTRATIVOS",
         "CONVENIOS_DE_COOPERACION_INTERINTERISTITUCIONAL": "CONTRATOS_INTERADMINISTRATIVOS",
-        # Artículo 355 (ESAL)
         "CONVENIOS_DE_ASOCIACION_ESAL": "AQUELLOS_DE_LOS_QUE_TRATA_EL_ARTICULO_355_DE_LA_CONSTITUCION_POLITICA_DE_COLOMBIA",
         "SELECCION_CUANDO_HAY_MAS_DE_UNA_ESAL": "AQUELLOS_DE_LOS_QUE_TRATA_EL_ARTICULO_355_DE_LA_CONSTITUCION_POLITICA_DE_COLOMBIA",
-        # Prestación de servicios
         "PRESTACION_DE_SERVICIOS_(SE_ELIMINARA)": "PRESTACION_DE_SERVICIOS_PROFESIONALES_Y_APOYO",
-        # Otros y Manual
         "SIN_PLURALIDAD_DE_OFERENTES": "MANUAL_DE_CONTRATACION",
         "DESARROLLO_ACTIVIDAD_CIENTIFICA_Y_TECNOLOGICA": "OTRAS_FORMAS_DE_CONTRATACION_DIRECTA",
         "ABIERTO": "OTROS",
         "MANUAL_DE_CONTRATACION": "MANUAL_DE_CONTRATACION",
-        "MANUAL_DE_CONTRATACION": "MANUAL_DE_CONTRATACION",  # Doble entrada por seguridad
-        # Suministros
+        "MANUAL_DE_CONTRATACION": "MANUAL_DE_CONTRATACION",
         "ORDEN_DE_COMPRA": "SUMINISTROS",
         "ORDEN_DE_SERVICIO": "SUMINISTROS",
     }
 
-    # Aplicamos el reemplazo creando una columna nueva para auditoría
     df["CAUSAL_ESTANDAR"] = df["CAUSAL_CONTRATO"].replace(mapeo_causales)
 
     return df
+
+
+# Estandariza la columna 'ORIGEN_RECURSOS' aplicando una lógica jerárquica
+# para clasificar las fuentes de financiación en categorías homogéneas.
+# La función identifica combinaciones de recursos (SGP, SGR, Nación y propios)
+# y asigna una clasificación final en 'ORIGEN_RECURSOS_ESTANDAR' para mejorar
+# la consistencia y el análisis de los datos.
 
 
 def estandarizar_recursos_v2(df):
@@ -183,12 +183,10 @@ def estandarizar_recursos_v2(df):
             return "NO REPORTADO"
         t = str(texto).upper().strip()
 
-        # Identificadores clave
         tiene_sgp = "SGP" in t
         tiene_sgr = "SGR" in t or "REGALIAS" in t
         tiene_nacion = "NACION" in t and not (tiene_sgp or tiene_sgr)
 
-        # Fuentes locales/propias
         tiene_propio = any(
             p in t
             for p in [
@@ -200,29 +198,21 @@ def estandarizar_recursos_v2(df):
             ]
         )
 
-        # --- LÓGICA DE JERARQUÍA ---
-
-        # 1. MEZCLAS CON SGP
         if tiene_sgp and tiene_propio:
             return "RECURSOS PROPIOS / NACION SGP"
 
-        # 2. MEZCLAS CON SGR (Regalías)
         if tiene_sgr and tiene_propio:
             return "RECURSOS PROPIOS / NACION SGR"
 
-        # 3. NACIÓN SGR PURO
         if tiene_sgr:
             return "NACION SGR"
 
-        # 4. NACIÓN SGP PURO (O NACIÓN solo, que suele ser SGP en estos reportes)
         if tiene_sgp or tiene_nacion:
             return "NACION SGP"
 
-        # 5. OTROS
         if "OTROS" in t:
             return "OTROS"
 
-        # 6. POR DEFECTO (PROPIOS)
         return "RECURSOS PROPIOS"
 
     df["ORIGEN_RECURSOS_ESTANDAR"] = df["ORIGEN_RECURSOS"].apply(mapeo_profundo)

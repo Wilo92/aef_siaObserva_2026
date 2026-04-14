@@ -1,3 +1,5 @@
+# Centralizacion de las importaciones del proyecto
+
 from .config import setup_environment, RAW_DATA_PATH, BASE_DIR
 from .formatters import formato_moneda_co, formato_miles_co
 from .cleaners import (
@@ -17,4 +19,6 @@ from .analysis import (
     analizar_por_origen_recursos,
     analizar_ranking_entidades,
     analizar_rendicion_extemporanea,
+    obtener_resumen_modalidad,
+    resumen_extemporaneos_por_entidad,
 )

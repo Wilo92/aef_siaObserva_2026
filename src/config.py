@@ -2,6 +2,7 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 
+# Se definen las rutas base del proyecto , la ubicacion de las muestras de auditoria y la exportacion de archivos procesados 
 
 BASE_DIR = os.path.abspath(os.path.join(os.getcwd(), ".."))
 RAW_DATA_PATH = os.path.join(BASE_DIR, "data", "raw")
