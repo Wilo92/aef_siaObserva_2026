@@ -26,11 +26,11 @@ Analizar el comportamiento de la contratación pública reportada en SIA Observa
 ## Alcance del análisis
 
 - **Cobertura temática:** Información de contratación pública reportada en la plataforma SIA Observa, incluyendo los informes básico y extendido.
-- **Cobertura temporal:** Vigencia contractual 2025 (con procesamiento y análisis realizados durante el año 2026).
+- **Cobertura temporal:** Vigencia contractual 2025.
 - **Cobertura analítica:** Análisis descriptivo de la información, incluyendo agregaciones por variables clave, estandarización de categorías y generación de visualizaciones.
 - **Propósito de uso:** Apoyar el ejercicio auditor y fortalecer la transparencia en la gestión contractual.
 
-Este ejercicio no sustituye la revisión integral de legalidad contractual ni constituye, por sí mismo, un pronunciamiento fiscal definitivo.
+
 
 ## Fuente de datos
 
@@ -70,24 +70,6 @@ La metodología combina prácticas de analítica de datos con enfoque de auditor
 - Análisis por origen de recursos (categorías estandarizadas).
 - Identificación de contratos con adiciones y clasificación de alertas.
 - Medición de rendición extemporánea (días de diferencia entre creación en el sistema y acta de inicio del contrato) y resumen por entidad.
-
-
-
-## Resultados del análisis
-
-Los resultados del análisis se generan a partir de la ejecución del notebook y los scripts incluidos en este repositorio, utilizando el conjunto de datos correspondiente al corte procesado.
-
-Las salidas incluyen:
-
--Tablas agregadas por entidad, modalidad de contratación y tipo de contrato.
--Identificación de contratos con adiciones relevantes.
--Análisis de comportamientos de rendición extemporánea.
--Caracterización de contratistas según número de contratos y montos asociados.
--Visualizaciones que apoyan la interpretación de los datos.
-
-Nota: Los hallazgos oficiales, conclusiones y análisis jurídico se presentan en el informe técnico en PDF elaborado en conjunto con el equipo auditor.
-
-
 
 ## Estructura del proyecto
 
@@ -150,6 +132,14 @@ Luego abrir y ejecutar secuencialmente:
 
 - Tablas y gráficas en el notebook.
 - Archivos exportados en `data/processed/` (según celdas de exportación ejecutadas).
+
+### 5) Visualización interactiva
+
+Los resultados de este análisis están disponibles en un tablero de Power BI de acceso público:
+
+[Ver tablero en Power BI] = https://app.powerbi.com/view?r=eyJrIjoiNjhiMGZjMGUtZTUwZC00ZjYzLThjZmUtNjc5NTg5NTM1ZGIwIiwidCI6IjcxZTc1NWExLWI2ZjAtNDQyNC1hNGU1LTI1ZWQwZjY4NDhjZiIsImMiOjR9&pageName=c7af198a26c5edb2c43d
+
+
 
 ## Conclusiones
 

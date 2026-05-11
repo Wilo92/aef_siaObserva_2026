@@ -58,7 +58,7 @@ def contratacion_por_tipo_entidad(df):
     Agrupa los contratos por TIPO_DE_ENTIDAD y calcula cantidad y suma de valores.
     """
     if "TIPO_DE_ENTIDAD" not in df.columns or "VALOR_VIGENTE" not in df.columns:
-        return "⚠️ Columnas no encontradas"
+        return "Columnas no encontradas"
 
     # Agrupamos y aplicamos múltiples funciones de agregación
     resumen_entidad = (
@@ -78,7 +78,7 @@ def analizar_por_tipo_contrato(df):
     Calcula cantidad, % de participación y valor total por TIPO_CONTRATO.
     """
     if "TIPO_CONTRATO" not in df.columns or "VALOR_VIGENTE" not in df.columns:
-        return "⚠️ Columnas no encontradas"
+        return "Columnas no encontradas"
 
     # 1. Agrupación básica
     resumen = (
@@ -105,7 +105,7 @@ def analizar_por_modalidad(df):
     col_val = "VALOR_VIGENTE"
 
     if col_mod not in df.columns or col_val not in df.columns:
-        return "⚠️ Columnas no encontradas. Verifique que corrió las funciones de estandarización."
+        return "Columnas no encontradas. Verifique que corrió las funciones de estandarización."
 
     # Agrupamos
     resumen = (
@@ -130,7 +130,7 @@ def analizar_por_origen_recursos(df):
     col_val = "VALOR_VIGENTE"
 
     if col_recurso not in df.columns or col_val not in df.columns:
-        return "⚠️ Columna 'ORIGEN_RECURSOS_ESTANDAR' no encontrada. Ejecute estandarizar_recursos_v2 primero."
+        return "Columna 'ORIGEN_RECURSOS_ESTANDAR' no encontrada. Ejecute estandarizar_recursos_v2 primero."
 
     # Agrupamos por la columna estandarizada
     resumen = (
@@ -156,7 +156,7 @@ def analizar_ranking_entidades(df):
     col_val = "VALOR_VIGENTE"
 
     if col_entidad not in df.columns or col_val not in df.columns:
-        return "⚠️ Columnas no encontradas."
+        return "Columnas no encontradas."
 
     # Agrupamos por Entidad
     resumen = (
@@ -219,3 +219,28 @@ def calcular_duracion_vigencia(df):
         pd.to_numeric(df["VIGENCIA"], errors="coerce").fillna(2025).astype("Int64")
     )
     return df
+
+
+
+
+
+def entidades_con_recursos_otros(df):
+  
+    col_recurso = "ORIGEN_RECURSOS_ESTANDAR"
+    col_entidad = "ENTIDAD"
+
+    if col_recurso not in df.columns:
+        return "Columna 'ORIGEN_RECURSOS_ESTANDAR' no encontrada. Ejecute estandarizar_recursos_v2 primero."
+
+    
+    df_otros = df[df[col_recurso] == "OTROS"].copy()
+
+   
+    resumen = (
+        df_otros.groupby(col_entidad)
+        .agg(CANTIDAD_CONTRATOS=(col_entidad, "count"))
+        .reset_index()
+        .sort_values("CANTIDAD_CONTRATOS", ascending=False)
+    )
+
+    return resumen
