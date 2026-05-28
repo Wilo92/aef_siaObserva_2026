@@ -9,6 +9,8 @@ from .cleaners import (
     estandarizar_modalidades,
     estandarizar_causales,
     estandarizar_recursos_v2,
+    TIPO_POR_ENTIDAD,
+    asignar_tipo_entidad,
 )
 from .analysis import (
     calcular_alertas_adicion,
@@ -23,5 +25,4 @@ from .analysis import (
     resumen_extemporaneos_por_entidad,
     calcular_duracion_vigencia,
     entidades_con_recursos_otros,
-
 )
