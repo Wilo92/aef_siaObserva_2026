@@ -15,7 +15,7 @@ streamlit==1.45.1
 
 
 
-EjecutarProyecto==streamlit run app.py
+
 
 PyGithub==2.3.0
 python-dotenv==1.0.1
