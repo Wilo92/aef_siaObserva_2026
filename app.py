@@ -2,6 +2,11 @@ import streamlit as st
 import pandas as pd
 import os
 import sys
+import base64
+from dotenv import load_dotenv
+from github import Github
+
+load_dotenv()
 
 sys.path.insert(0, os.path.dirname(__file__))
 
@@ -15,7 +20,35 @@ from src.cleaners import (
 from src.system import exportar_para_bi
 
 PROCESSED_PATH = os.path.join(os.path.dirname(__file__), "data", "processed_dinamico")
+def push_a_github(ruta_local, nombre_archivo):
+    token = os.getenv("GITHUB_TOKEN")
+    repo_nombre = os.getenv("GITHUB_REPO")
+    branch = os.getenv("GITHUB_BRANCH")
 
+    g = Github(token)
+    repo = g.get_repo(repo_nombre)
+
+    ruta_github = f"data/processed_dinamico/{nombre_archivo}"
+
+    with open(ruta_local, "rb") as f:
+        contenido = f.read()
+
+    try:
+        archivo_existente = repo.get_contents(ruta_github, ref=branch)
+        repo.update_file(
+            ruta_github,
+            f"Actualización automática: {nombre_archivo}",
+            contenido,
+            archivo_existente.sha,
+            branch=branch,
+        )
+    except Exception:
+        repo.create_file(
+            ruta_github,
+            f"Creación automática: {nombre_archivo}",
+            contenido,
+            branch=branch,
+        )
 
 def procesar_pipeline(df, tipos):
     df = aplicar_tipos_datos(df, tipos)
@@ -32,7 +65,7 @@ st.set_page_config(
     layout="centered",
 )
 
-col1,col2,col3=st.columns([1,2,1])
+col1, col2, col3 = st.columns([1, 2, 1])
 
 with col2:
     st.image("assets/logo.png", width=500)
@@ -41,7 +74,9 @@ st.title("Sistema de Auditoría Contractual SIA Observa — CGR Risaralda")
 st.caption("Contraloría General de Risaralda — Plataforma SIA Observa")
 st.divider()
 
-st.subheader("Aqui se cargan los formatos Basicos y Extendidos que entrega el sistema de informacion Sia Observa")
+st.subheader(
+    "Aqui se cargan los formatos Basicos y Extendidos que entrega el sistema de informacion Sia Observa"
+)
 col1, col2 = st.columns(2)
 
 with col1:
@@ -75,16 +110,29 @@ if archivo_basico and archivo_extendido:
 
             st.write("Exportando archivos procesados...")
             exportar_para_bi(
+                
                 {
                     "Informe_Basico_Procesado": df_basico,
                     "Informe_Extendido_Procesado": df_extendido,
                 },
                 PROCESSED_PATH,
             )
+            st.write("Subiendo archivos a GitHub...")
+            push_a_github(
+                os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv"),
+                "Informe_Basico_Procesado.csv",
+            )
+            push_a_github(
+                os.path.join(PROCESSED_PATH, "Informe_Extendido_Procesado.csv"),
+                "Informe_Extendido_Procesado.csv",
+            )
+            
 
             sin_clasificar = (df_basico["TIPO_DE_ENTIDAD"] == "NO CLASIFICADO").sum()
             if sin_clasificar > 0:
-                st.warning(f" {sin_clasificar} entidades sin clasificar — revisar diccionario.")
+                st.warning(
+                    f" {sin_clasificar} entidades sin clasificar — revisar diccionario."
+                )
 
             status.update(label="Procesamiento completado", state="complete")
 
