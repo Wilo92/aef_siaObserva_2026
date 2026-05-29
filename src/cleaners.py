@@ -30,7 +30,42 @@ def limpiar_texto_auditoria(texto, es_cabecera=False):
 
 # Aplica y estandariza tipos de datos a un DataFrame según un mapeo definido, limpiando textos
 # convirtiendo valores numéricos y formateando fechas para asegurar consistencia en el análisis.
+
+# Mapeo de nombres de columnas tal como vienen de SIA Observa
+# hacia los nombres estandarizados que usa el pipeline.
+RENOMBRAR_COLUMNAS = {
+    "CÓDIGOCONTRATO": "CODIGO_CONTRATO",
+    "OBJETOCONTRATO": "OBJETO_CONTRATO",
+    "VALOR INICIALCONTRATO": "VALOR_INICIAL_CONTRATO",
+    "FECHASUSCRIPCION": "FECHA_SUSCRIPCION",
+    "FECHAACTA DE INICIO": "FECHA_ACTA_DE_INICIO",
+    "FECHATERMINACION": "FECHA_TERMINACION",
+    "TIEMPO EJECUCIÓN": "TIEMPO_EJECUCION",
+    "MODALIDADCONTRATACIÓN": "MODALIDAD_CONTRATACION",
+    "CAUSAL CONTRATO": "CAUSAL_CONTRATO",
+    "TIPOCONTRATO": "TIPO_CONTRATO",
+    "FECHACREACIÓN": "FECHA_CREACION",
+    "FECHATERMINACIONAMPLIADA": "FECHA_TERMINACION_AMPLIADA",
+    "ESTADOCONTRATO": "ESTADO_CONTRATO",
+    "Nombre del Rubro": "NOMBRE_DEL_RUBRO",
+    "Apropiación Inicial": "APROPIACION_INICIAL",
+    "Origen Recursos": "ORIGEN_RECURSOS",
+    "NIT.1": "NIT_1",
+    "NOMBRE": "NOMBRE",
+    "TIPO": "TIPO",
+    "NIT.2": "NIT_2",
+    "NOMBRE.1": "NOMBRE_1",
+    "TIPO.1": "TIPO_1",
+}
+
+
+def renombrar_columnas_sia(df):
+    return df.rename(columns=RENOMBRAR_COLUMNAS)
+
+
 def aplicar_tipos_datos(df, mapeo_tipos):
+
+    df = renombrar_columnas_sia(df)
 
     df.columns = [limpiar_texto_auditoria(col, es_cabecera=True) for col in df.columns]
 

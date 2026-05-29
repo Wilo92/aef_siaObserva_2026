@@ -11,6 +11,8 @@ from .cleaners import (
     estandarizar_recursos_v2,
     TIPO_POR_ENTIDAD,
     asignar_tipo_entidad,
+    renombrar_columnas_sia,
+    RENOMBRAR_COLUMNAS,
 )
 from .analysis import (
     calcular_alertas_adicion,

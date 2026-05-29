@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 import sys
-import base64
+import time
 from dotenv import load_dotenv
 from github import Github
 
@@ -20,6 +20,8 @@ from src.cleaners import (
 from src.system import exportar_para_bi
 
 PROCESSED_PATH = os.path.join(os.path.dirname(__file__), "data", "processed_dinamico")
+
+
 def push_a_github(ruta_local, nombre_archivo):
     token = os.getenv("GITHUB_TOKEN")
     repo_nombre = os.getenv("GITHUB_REPO")
@@ -42,13 +44,20 @@ def push_a_github(ruta_local, nombre_archivo):
             archivo_existente.sha,
             branch=branch,
         )
-    except Exception:
-        repo.create_file(
-            ruta_github,
-            f"Creación automática: {nombre_archivo}",
-            contenido,
-            branch=branch,
-        )
+        return True
+    except Exception as e1:
+        try:
+            repo.create_file(
+                ruta_github,
+                f"Creación automática: {nombre_archivo}",
+                contenido,
+                branch=branch,
+            )
+            return True
+        except Exception as e2:
+            st.error(f"Error subiendo {nombre_archivo}: {e2}")
+            return False
+
 
 def procesar_pipeline(df, tipos):
     df = aplicar_tipos_datos(df, tipos)
@@ -66,7 +75,6 @@ st.set_page_config(
 )
 
 col1, col2, col3 = st.columns([1, 2, 1])
-
 with col2:
     st.image("assets/logo.png", width=500)
 
@@ -77,32 +85,28 @@ st.divider()
 st.subheader(
     "Aqui se cargan los formatos Basicos y Extendidos que entrega el sistema de informacion Sia Observa"
 )
-col1, col2 = st.columns(2)
 
+col1, col2 = st.columns(2)
 with col1:
     archivo_basico = st.file_uploader(
-        "Aqui va el Informe Básico",
-        type=["xlsx"],
-        key="basico",
+        "Aqui va el Informe Básico", type=["xlsx"], key="basico"
     )
-
 with col2:
     archivo_extendido = st.file_uploader(
-        "Aqui va el Informe Extendido",
-        type=["xlsx"],
-        key="extendido",
+        "Aqui va el Informe Extendido", type=["xlsx"], key="extendido"
     )
 
 st.divider()
 
 if archivo_basico and archivo_extendido:
     if st.button("Procesar", type="primary", use_container_width=True):
+        st.cache_data.clear()
 
         with st.status("Procesando archivos...", expanded=True) as status:
 
             st.write("Leyendo archivos Excel...")
-            df_basico = pd.read_excel(archivo_basico)
-            df_extendido = pd.read_excel(archivo_extendido)
+            df_basico = pd.read_excel(archivo_basico, skiprows=1)
+            df_extendido = pd.read_excel(archivo_extendido, skiprows=1)
 
             st.write("Ejecutando pipeline ETL...")
             df_basico = procesar_pipeline(df_basico, TIPOS_BASICO)
@@ -110,28 +114,42 @@ if archivo_basico and archivo_extendido:
 
             st.write("Exportando archivos procesados...")
             exportar_para_bi(
-                
                 {
                     "Informe_Basico_Procesado": df_basico,
                     "Informe_Extendido_Procesado": df_extendido,
                 },
                 PROCESSED_PATH,
             )
+
+            # Esperamos que el sistema de archivos termine de escribir
+            time.sleep(5)
+
+            # Verificamos cuántas filas quedaron en disco
+            basico_local = pd.read_csv(
+                os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv"),
+                sep=";",
+                decimal=",",
+                encoding="utf-8-sig",
+            )
+            st.write(f"Filas en disco antes del push: {len(basico_local):,}")
+
             st.write("Subiendo archivos a GitHub...")
-            push_a_github(
+            resultado_basico = push_a_github(
                 os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv"),
                 "Informe_Basico_Procesado.csv",
             )
-            push_a_github(
+            st.write(f"Resultado básico: {resultado_basico}")
+
+            resultado_extendido = push_a_github(
                 os.path.join(PROCESSED_PATH, "Informe_Extendido_Procesado.csv"),
                 "Informe_Extendido_Procesado.csv",
             )
-            
+            st.write(f"Resultado extendido: {resultado_extendido}")
 
             sin_clasificar = (df_basico["TIPO_DE_ENTIDAD"] == "NO CLASIFICADO").sum()
             if sin_clasificar > 0:
                 st.warning(
-                    f" {sin_clasificar} entidades sin clasificar — revisar diccionario."
+                    f"{sin_clasificar} entidades sin clasificar — revisar diccionario."
                 )
 
             status.update(label="Procesamiento completado", state="complete")
@@ -148,7 +166,6 @@ if archivo_basico and archivo_extendido:
         st.subheader("Descargar archivos procesados")
 
         col1, col2 = st.columns(2)
-
         with col1:
             path_b = os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv")
             with open(path_b, "rb") as f:
@@ -159,7 +176,6 @@ if archivo_basico and archivo_extendido:
                     mime="text/csv",
                     use_container_width=True,
                 )
-
         with col2:
             path_e = os.path.join(PROCESSED_PATH, "Informe_Extendido_Procesado.csv")
             with open(path_e, "rb") as f:
