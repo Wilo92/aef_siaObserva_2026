@@ -95,20 +95,12 @@ st.title("Sistema de Auditoría Contractual SIA Observa — CGR Risaralda")
 st.caption("Contraloría General de Risaralda — Plataforma SIA Observa")
 st.divider()
 
-# ── Sección dashboards ───────────────────────────────────────────────────────
-st.subheader("📊 Dashboards de Control Fiscal")
+# ── Dashboards oficiales de auditoría ────────────────────────────────────────
+st.subheader("📋 Dashboards Oficiales de Auditoría")
 
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
 with col1:
-    st.image(PBI_LOGO, width=80)
-    st.link_button(
-        "Contratación en Tiempo Real",
-        url=URL_DASHBOARD_DINAMICO,
-        use_container_width=True,
-    )
-
-with col2:
     st.image(PBI_LOGO, width=80)
     st.link_button(
         "Auditoría Oficial — Muestra 1",
@@ -116,7 +108,7 @@ with col2:
         use_container_width=True,
     )
 
-with col3:
+with col2:
     st.image(PBI_LOGO, width=80)
     st.link_button(
         "Auditoría Oficial — Muestra 2",
@@ -222,7 +214,19 @@ if archivo_basico and archivo_extendido:
                 )
 
         st.divider()
-        st.info("💡 Abre el dashboard de Contratación en Tiempo Real y refresca para ver los datos actualizados.")
+
+        # ── Dashboard dinámico ────────────────────────────────────────────────
+        st.subheader("📊 Dashboard Contratación en Tiempo Real")
+        st.caption("Los datos acaban de actualizarse. Abre el dashboard y refresca.")
+
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.image(PBI_LOGO, width=80)
+            st.link_button(
+                "📈 Ver Contratación en Tiempo Real",
+                url=URL_DASHBOARD_DINAMICO,
+                use_container_width=True,
+            )
 
 else:
     st.info("⬆️ Carga los dos archivos Excel para habilitar el procesamiento.")
