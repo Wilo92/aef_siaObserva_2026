@@ -30,7 +30,7 @@ URL_DASHBOARD_DINAMICO  = "https://URL_DASHBOARD_DINAMICO_AQUI"
 URL_DASHBOARD_OFICIAL_1 = "https://URL_DASHBOARD_OFICIAL_1_AQUI"
 URL_DASHBOARD_OFICIAL_2 = "https://URL_DASHBOARD_OFICIAL_2_AQUI"
 
-# Logo oficial de Power BI desde Wikipedia (no requiere archivos locales)
+# Logo oficial de Power BI
 PBI_LOGO = "https://upload.wikimedia.org/wikipedia/commons/c/cf/New_Power_BI_Logo.svg"
 # ────────────────────────────────────────────────────────────────────────────
 
@@ -101,27 +101,27 @@ st.subheader("📊 Dashboards de Control Fiscal")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.markdown(
-        f'<a href="{URL_DASHBOARD_DINAMICO}" target="_blank">'
-        f'<img src="{PBI_LOGO}" width="80" style="cursor:pointer;display:block;margin:auto"></a>'
-        f'<p style="text-align:center;font-size:13px;margin-top:8px">Contratación en Tiempo Real</p>',
-        unsafe_allow_html=True,
+    st.image(PBI_LOGO, width=80)
+    st.link_button(
+        "Contratación en Tiempo Real",
+        url=URL_DASHBOARD_DINAMICO,
+        use_container_width=True,
     )
 
 with col2:
-    st.markdown(
-        f'<a href="{URL_DASHBOARD_OFICIAL_1}" target="_blank">'
-        f'<img src="{PBI_LOGO}" width="80" style="cursor:pointer;display:block;margin:auto"></a>'
-        f'<p style="text-align:center;font-size:13px;margin-top:8px">Auditoría Oficial — Muestra 1</p>',
-        unsafe_allow_html=True,
+    st.image(PBI_LOGO, width=80)
+    st.link_button(
+        "Auditoría Oficial — Muestra 1",
+        url=URL_DASHBOARD_OFICIAL_1,
+        use_container_width=True,
     )
 
 with col3:
-    st.markdown(
-        f'<a href="{URL_DASHBOARD_OFICIAL_2}" target="_blank">'
-        f'<img src="{PBI_LOGO}" width="80" style="cursor:pointer;display:block;margin:auto"></a>'
-        f'<p style="text-align:center;font-size:13px;margin-top:8px">Auditoría Oficial — Muestra 2</p>',
-        unsafe_allow_html=True,
+    st.image(PBI_LOGO, width=80)
+    st.link_button(
+        "Auditoría Oficial — Muestra 2",
+        url=URL_DASHBOARD_OFICIAL_2,
+        use_container_width=True,
     )
 
 st.divider()
