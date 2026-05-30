@@ -1,4 +1,6 @@
 import streamlit as st
+import traceback
+import sys
 import pandas as pd
 import os
 import sys
@@ -193,3 +195,9 @@ if archivo_basico and archivo_extendido:
 
 else:
     st.info("Carga los dos archivos Excel para habilitar el procesamiento.")
+# Debug temporal
+try:
+    from src.cleaners import aplicar_tipos_datos
+    st.success("imports OK")
+except Exception as e:
+    st.error(f"Error de import: {traceback.format_exc()}")
