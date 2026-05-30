@@ -25,12 +25,10 @@ from src.system import exportar_para_bi
 PROCESSED_PATH = os.path.join(os.path.dirname(__file__), "data", "processed_dinamico")
 
 # ── URLs de los dashboards de Power BI ──────────────────────────────────────
-# Reemplaza cada URL cuando tengas los links publicados
 URL_DASHBOARD_DINAMICO  = "https://URL_DASHBOARD_DINAMICO_AQUI"
 URL_DASHBOARD_OFICIAL_1 = "https://URL_DASHBOARD_OFICIAL_1_AQUI"
 URL_DASHBOARD_OFICIAL_2 = "https://URL_DASHBOARD_OFICIAL_2_AQUI"
 
-# Logo oficial de Power BI
 PBI_LOGO = "https://upload.wikimedia.org/wikipedia/commons/c/cf/New_Power_BI_Logo.svg"
 # ────────────────────────────────────────────────────────────────────────────
 
@@ -86,6 +84,16 @@ st.set_page_config(
     page_icon="assets/logo.png",
     layout="centered",
 )
+
+# ── Ocultar navbar y footer de Streamlit ─────────────────────────────────────
+st.markdown("""
+    <style>
+    #MainMenu {visibility: hidden;}
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
+    [data-testid="stToolbar"] {visibility: hidden;}
+    </style>
+""", unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
@@ -230,3 +238,25 @@ if archivo_basico and archivo_extendido:
 
 else:
     st.info("⬆️ Carga los dos archivos Excel para habilitar el procesamiento.")
+
+# ── Footer ───────────────────────────────────────────────────────────────────
+st.markdown("""
+    <style>
+    .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #f0f4f0;
+        border-top: 1px solid #d0d8d0;
+        text-align: center;
+        padding: 8px 0;
+        font-size: 12px;
+        color: #555555;
+        z-index: 999;
+    }
+    </style>
+    <div class="footer">
+        © 2026 CGR Risaralda &nbsp;|&nbsp; Pipeline de Auditoría Contractual &nbsp;|&nbsp; Desarrollado por @wilo
+    </div>
+""", unsafe_allow_html=True)
