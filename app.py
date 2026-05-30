@@ -3,10 +3,14 @@ import pandas as pd
 import os
 import sys
 import time
-from dotenv import load_dotenv
 from github import Github
 
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 
 sys.path.insert(0, os.path.dirname(__file__))
 
