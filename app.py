@@ -245,11 +245,39 @@ html, body, [class*="css"] {
     letter-spacing: 0.05em;
     z-index: 999;
 }
+
+@keyframes girar {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+.spinner-cgr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 0;
+}
+
+.spinner-cgr img {
+    width: 120px;
+    animation: girar 1.5s linear infinite;
+    margin-bottom: 1.2rem;
+}
+
+.spinner-cgr p {
+    font-family: 'Source Sans 3', sans-serif;
+    color: var(--verde);
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    margin: 0;
+}
 </style>
 """, unsafe_allow_html=True)
 
 # ── Header con logo en base64 ─────────────────────────────────────────────────
 logo_b64 = get_logo_base64()
+
 st.markdown(f"""
 <div class="header-institucional">
     <img src="data:image/png;base64,{logo_b64}" alt="CGR Risaralda"/>
@@ -293,7 +321,6 @@ st.markdown('</div>', unsafe_allow_html=True)
 # ── Validación y procesamiento ────────────────────────────────────────────────
 if archivo_basico and archivo_extendido:
 
-    # Validar nombres de archivo
     nombre_basico_valido = archivo_basico.name == "Informe_Contratos_Basico.xlsx"
     nombre_extendido_valido = archivo_extendido.name == "Informe_Contratos_Extendido.xlsx"
 
@@ -306,26 +333,33 @@ if archivo_basico and archivo_extendido:
         if st.button("⚙️ Procesar y Publicar", type="primary", use_container_width=True):
             st.cache_data.clear()
 
+            # ── Spinner con logo girando ──────────────────────────────────────
+            spinner = st.empty()
+            spinner.markdown(f"""
+            <div class="spinner-cgr">
+                <img src="data:image/png;base64,{logo_b64}" alt="Procesando..."/>
+                <p>Procesando datos de contratación pública...</p>
+            </div>
+            """, unsafe_allow_html=True)
+            time.sleep(2)
+            spinner.empty()
+
             with st.status("Procesando archivos...", expanded=True) as status:
 
                 st.write("📂 Leyendo archivos Excel...")
                 df_basico = pd.read_excel(archivo_basico, skiprows=1)
                 df_extendido = pd.read_excel(archivo_extendido, skiprows=1)
 
-                # Validar columnas clave
                 cols_basico_requeridas = {"NIT", "ENTIDAD", "VIGENCIA"}
                 cols_extendido_requeridas = {"NIT", "ENTIDAD", "VIGENCIA"}
-                cols_basico_actual = set(df_basico.columns)
-                cols_extendido_actual = set(df_extendido.columns)
-
-                faltantes_basico = cols_basico_requeridas - cols_basico_actual
-                faltantes_extendido = cols_extendido_requeridas - cols_extendido_actual
+                faltantes_basico = cols_basico_requeridas - set(df_basico.columns)
+                faltantes_extendido = cols_extendido_requeridas - set(df_extendido.columns)
 
                 if faltantes_basico or faltantes_extendido:
                     if faltantes_basico:
-                        st.error(f"❌ Informe Básico no tiene las columnas esperadas: {faltantes_basico}")
+                        st.error(f"❌ Informe Básico sin columnas esperadas: {faltantes_basico}")
                     if faltantes_extendido:
-                        st.error(f"❌ Informe Extendido no tiene las columnas esperadas: {faltantes_extendido}")
+                        st.error(f"❌ Informe Extendido sin columnas esperadas: {faltantes_extendido}")
                     status.update(label="❌ Error de validación", state="error")
                     st.stop()
 
