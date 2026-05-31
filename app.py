@@ -90,13 +90,11 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@300;400;600&display=swap');
 
-/* Ocultar elementos de Streamlit */
 #MainMenu {visibility: hidden;}
 header {visibility: hidden;}
 footer {visibility: hidden;}
 [data-testid="stToolbar"] {visibility: hidden;}
 
-/* Variables de color institucional */
 :root {
     --verde: #2e7d32;
     --verde-claro: #e8f5e9;
@@ -105,19 +103,16 @@ footer {visibility: hidden;}
     --borde: #dde5dd;
 }
 
-/* Contenedor principal */
 .block-container {
     max-width: 820px !important;
     padding: 2rem 2rem 6rem 2rem !important;
 }
 
-/* Tipografía general */
 html, body, [class*="css"] {
     font-family: 'Source Sans 3', sans-serif;
     color: var(--gris-texto);
 }
 
-/* Header institucional */
 .header-institucional {
     text-align: center;
     padding: 2rem 0 1rem 0;
@@ -142,7 +137,6 @@ html, body, [class*="css"] {
     text-transform: uppercase;
 }
 
-/* Secciones con card */
 .seccion-card {
     background: white;
     border: 1px solid var(--borde);
@@ -164,7 +158,6 @@ html, body, [class*="css"] {
     border-bottom: 1px solid var(--verde-claro);
 }
 
-/* Botones link */
 [data-testid="stLinkButton"] > a {
     background-color: white !important;
     color: var(--verde) !important;
@@ -181,7 +174,6 @@ html, body, [class*="css"] {
     color: white !important;
 }
 
-/* Botón primario */
 [data-testid="stButton"] > button[kind="primary"] {
     background-color: var(--verde) !important;
     border: none !important;
@@ -198,7 +190,6 @@ html, body, [class*="css"] {
     background-color: #1b5e20 !important;
 }
 
-/* Métricas */
 [data-testid="stMetric"] {
     background: var(--verde-claro);
     border-radius: 8px;
@@ -206,7 +197,6 @@ html, body, [class*="css"] {
     border-left: 3px solid var(--verde);
 }
 
-/* Botones de descarga */
 [data-testid="stDownloadButton"] > button {
     background-color: white !important;
     color: var(--gris-texto) !important;
@@ -220,26 +210,22 @@ html, body, [class*="css"] {
     color: var(--verde) !important;
 }
 
-/* Divisor */
 hr {
     border-color: var(--borde) !important;
     margin: 1.5rem 0 !important;
 }
 
-/* Info box */
 [data-testid="stAlert"] {
     border-radius: 8px !important;
     font-size: 0.9rem !important;
 }
 
-/* Logo centrado */
 .logo-pbi {
     display: flex;
     justify-content: center;
     margin-bottom: 0.6rem;
 }
 
-/* Footer */
 .footer-cgr {
     position: fixed;
     bottom: 0;
@@ -336,7 +322,6 @@ if archivo_basico and archivo_extendido:
                 "Informe_Extendido_Procesado.csv",
             )
 
-            # Guardar fecha del último procesamiento
             from datetime import datetime
             fecha_proceso = datetime.now().strftime("%d/%m/%Y %H:%M")
             with open(os.path.join(PROCESSED_PATH, "ultimo_proceso.txt"), "w") as f:
@@ -356,6 +341,30 @@ if archivo_basico and archivo_extendido:
         col1.metric("Contratos Básico", f"{len(df_basico):,}")
         col2.metric("Contratos Extendido", f"{len(df_extendido):,}")
         col3.metric("Entidades", f"{df_basico['ENTIDAD'].nunique():,}")
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        # ── Previsualización ──────────────────────────────────────────────────
+        st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
+        st.markdown('<div class="seccion-titulo">🔍 Previsualización de Datos Procesados</div>', unsafe_allow_html=True)
+
+        tab1, tab2 = st.tabs(["Informe Básico", "Informe Extendido"])
+
+        with tab1:
+            st.caption(f"{len(df_basico):,} contratos · {len(df_basico.columns)} columnas")
+            st.dataframe(
+                df_basico.head(50),
+                use_container_width=True,
+                hide_index=True,
+            )
+
+        with tab2:
+            st.caption(f"{len(df_extendido):,} contratos · {len(df_extendido.columns)} columnas")
+            st.dataframe(
+                df_extendido.head(50),
+                use_container_width=True,
+                hide_index=True,
+            )
 
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -380,7 +389,6 @@ if archivo_basico and archivo_extendido:
         st.markdown('<div class="seccion-titulo">📈 Dashboard Contratación en Tiempo Real</div>', unsafe_allow_html=True)
         st.caption("Datos actualizados. Abre el dashboard y refresca para ver los cambios.")
 
-        # Leer fecha del último proceso
         ruta_fecha = os.path.join(PROCESSED_PATH, "ultimo_proceso.txt")
         if os.path.exists(ruta_fecha):
             with open(ruta_fecha, "r") as f:
