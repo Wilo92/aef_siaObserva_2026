@@ -176,10 +176,7 @@ if archivo_basico and archivo_extendido:
                 "Informe_Extendido_Procesado.csv",
             )
 
-            # ── Guardamos timestamp y dataframes en session_state ────────────
-            # session_state persiste entre re-runs del script.
-            # Sin esto, los datos se pierden cada vez que el usuario
-            # hace click en cualquier elemento de la app.
+            # Guardamos todo en session_state para no perder datos
             st.session_state["ultima_actualizacion"] = datetime.now().strftime(
                 "%d/%m/%Y a las %H:%M:%S"
             )
@@ -201,12 +198,12 @@ if archivo_basico and archivo_extendido:
                     state="complete",
                 )
 
-else:
-    st.info("⬆️ Carga los dos archivos Excel para habilitar el procesamiento.")
+elif not archivo_basico or not archivo_extendido:
+    # Solo mostramos el aviso si todavía no hay datos procesados
+    if "df_basico" not in st.session_state:
+        st.info("⬆️ Carga los dos archivos Excel para habilitar el procesamiento.")
 
-# ── Resultados (se muestran si ya hay datos en session_state) ────────────────
-# Separamos esta sección del botón para que los resultados
-# no desaparezcan cuando el usuario interactúa con la app.
+# ── Resultados (visibles si ya se procesó aunque se limpien los uploaders) ───
 if "df_basico" in st.session_state:
     df_basico = st.session_state["df_basico"]
     df_extendido = st.session_state["df_extendido"]
@@ -224,8 +221,6 @@ if "df_basico" in st.session_state:
     st.divider()
 
     # ── Previsualización con tabs ─────────────────────────────────────────────
-    # st.tabs() crea pestañas sin recargar la página.
-    # Mucho más limpio que mostrar dos tablas apiladas.
     st.subheader("🔍 Previsualización de Datos Procesados")
     tab1, tab2 = st.tabs(["📄 Informe Básico", "📄 Informe Extendido"])
 
@@ -245,7 +240,6 @@ if "df_basico" in st.session_state:
     col1, col2 = st.columns(2)
     with col1:
         path_b = os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv")
-        # os.path.exists() evita un crash si el archivo no se generó correctamente
         if os.path.exists(path_b):
             with open(path_b, "rb") as f:
                 st.download_button(
@@ -280,7 +274,6 @@ if "df_basico" in st.session_state:
             url=URL_DASHBOARD_DINAMICO,
             use_container_width=True,
         )
-        # Fecha visible debajo del botón
         st.success(f"🕐 Última actualización: **{ultima_actualizacion}**")
         st.caption("Abre el dashboard y presiona **Actualizar** para ver los datos más recientes.")
 
