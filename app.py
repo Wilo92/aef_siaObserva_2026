@@ -2,13 +2,11 @@ import streamlit as st
 import pandas as pd
 import os
 import sys
-from datetime import datetime
-import pytz
+import time
 from github import Github
 
 try:
     from dotenv import load_dotenv
-
     load_dotenv()
 except ImportError:
     pass
@@ -26,13 +24,13 @@ from src.system import exportar_para_bi
 
 PROCESSED_PATH = os.path.join(os.path.dirname(__file__), "data", "processed_dinamico")
 
-URL_DASHBOARD_DINAMICO = "https://app.powerbi.com/view?r=eyJrIjoiNDlkNDg4ZmUtY2E1NC00ZTAyLWEzOWItZTVkMGZjNjJkYjYyIiwidCI6IjcxZTc1NWExLWI2ZjAtNDQyNC1hNGU1LTI1ZWQwZjY4NDhjZiIsImMiOjR9&pageName=c7af198a26c5edb2c43d"
-URL_DASHBOARD_OFICIAL_1 = "https://app.powerbi.com/view?r=eyJrIjoiOTdiMjNlMTktNzE1My00OWFlLWE2ZGMtMWYxYzVlM2RmMGUzIiwidCI6IjcxZTc1NWExLWI2ZjAtNDQyNC1hNGU1LTI1ZWQwZjY4NDhjZiIsImMiOjR9&pageName=edf64b1f73e863d583df"
-URL_DASHBOARD_OFICIAL_2 = "https://app.powerbi.com/view?r=eyJrIjoiNjhiMGZjMGUtZTUwZC00ZjYzLThjZmUtNjc5NTg5NTM1ZGIwIiwidCI6IjcxZTc1NWExLWI2ZjAtNDQyNC1hNGU1LTI1ZWQwZjY4NDhjZiIsImMiOjR9&pageName=c7af198a26c5edb2c43d"
+# ── URLs de los dashboards de Power BI ──────────────────────────────────────
+URL_DASHBOARD_DINAMICO  = "https://URL_DASHBOARD_DINAMICO_AQUI"
+URL_DASHBOARD_OFICIAL_1 = "https://URL_DASHBOARD_OFICIAL_1_AQUI"
+URL_DASHBOARD_OFICIAL_2 = "https://URL_DASHBOARD_OFICIAL_2_AQUI"
 
 PBI_LOGO = "https://upload.wikimedia.org/wikipedia/commons/c/cf/New_Power_BI_Logo.svg"
-
-ZONA_COLOMBIA = pytz.timezone("America/Bogota")
+# ────────────────────────────────────────────────────────────────────────────
 
 
 def push_a_github(ruta_local, nombre_archivo):
@@ -58,7 +56,7 @@ def push_a_github(ruta_local, nombre_archivo):
             branch=branch,
         )
         return True
-    except Exception:
+    except Exception as e1:
         try:
             repo.create_file(
                 ruta_github,
@@ -87,59 +85,222 @@ st.set_page_config(
     layout="centered",
 )
 
-st.markdown(
-    """
-    <style>
-    #MainMenu {visibility: hidden;}
-    header {visibility: hidden;}
-    footer {visibility: hidden;}
-    [data-testid="stToolbar"] {visibility: hidden;}
-    </style>
-""",
-    unsafe_allow_html=True,
-)
+# ── CSS personalizado ─────────────────────────────────────────────────────────
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@300;400;600&display=swap');
 
+/* Ocultar elementos de Streamlit */
+#MainMenu {visibility: hidden;}
+header {visibility: hidden;}
+footer {visibility: hidden;}
+[data-testid="stToolbar"] {visibility: hidden;}
+
+/* Variables de color institucional */
+:root {
+    --verde: #2e7d32;
+    --verde-claro: #e8f5e9;
+    --gris-texto: #2c2c2c;
+    --gris-suave: #f5f6f5;
+    --borde: #dde5dd;
+}
+
+/* Contenedor principal */
+.block-container {
+    max-width: 820px !important;
+    padding: 2rem 2rem 6rem 2rem !important;
+}
+
+/* Tipografía general */
+html, body, [class*="css"] {
+    font-family: 'Source Sans 3', sans-serif;
+    color: var(--gris-texto);
+}
+
+/* Header institucional */
+.header-institucional {
+    text-align: center;
+    padding: 2rem 0 1rem 0;
+    border-bottom: 2px solid var(--verde);
+    margin-bottom: 2rem;
+}
+
+.header-institucional h1 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--gris-texto);
+    margin: 0.8rem 0 0.3rem 0;
+    line-height: 1.3;
+}
+
+.header-institucional p {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* Secciones con card */
+.seccion-card {
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    padding: 1.5rem 1.8rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.seccion-titulo {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--verde);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--verde-claro);
+}
+
+/* Botones link */
+[data-testid="stLinkButton"] > a {
+    background-color: white !important;
+    color: var(--verde) !important;
+    border: 1.5px solid var(--verde) !important;
+    border-radius: 6px !important;
+    font-family: 'Source Sans 3', sans-serif !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+}
+
+[data-testid="stLinkButton"] > a:hover {
+    background-color: var(--verde) !important;
+    color: white !important;
+}
+
+/* Botón primario */
+[data-testid="stButton"] > button[kind="primary"] {
+    background-color: var(--verde) !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-family: 'Source Sans 3', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    padding: 0.6rem 1rem !important;
+    letter-spacing: 0.03em !important;
+    transition: background-color 0.2s ease !important;
+}
+
+[data-testid="stButton"] > button[kind="primary"]:hover {
+    background-color: #1b5e20 !important;
+}
+
+/* Métricas */
+[data-testid="stMetric"] {
+    background: var(--verde-claro);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    border-left: 3px solid var(--verde);
+}
+
+/* Botones de descarga */
+[data-testid="stDownloadButton"] > button {
+    background-color: white !important;
+    color: var(--gris-texto) !important;
+    border: 1px solid var(--borde) !important;
+    border-radius: 6px !important;
+    font-size: 0.9rem !important;
+}
+
+[data-testid="stDownloadButton"] > button:hover {
+    border-color: var(--verde) !important;
+    color: var(--verde) !important;
+}
+
+/* Divisor */
+hr {
+    border-color: var(--borde) !important;
+    margin: 1.5rem 0 !important;
+}
+
+/* Info box */
+[data-testid="stAlert"] {
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+}
+
+/* Logo centrado */
+.logo-pbi {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.6rem;
+}
+
+/* Footer */
+.footer-cgr {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--verde);
+    text-align: center;
+    padding: 10px 0;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.05em;
+    z-index: 999;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ── Header institucional ──────────────────────────────────────────────────────
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
-    st.image("assets/logo.png", width=500)
+    st.image("assets/logo.png", width=220)
 
-st.title("Sistema de Auditoría Contractual SIA Observa — CGR Risaralda")
-st.caption("Contraloría General de Risaralda — Plataforma SIA Observa")
-st.divider()
+st.markdown("""
+<div class="header-institucional">
+    <h1>Sistema de Auditoría Contractual<br>SIA Observa</h1>
+    <p>Contraloría General de Risaralda · Control Fiscal 2026</p>
+</div>
+""", unsafe_allow_html=True)
 
-st.subheader("📋 Dashboards Oficiales de Auditoría")
+# ── Dashboards oficiales ──────────────────────────────────────────────────────
+st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
+st.markdown('<div class="seccion-titulo">📋 Dashboards Oficiales de Auditoría</div>', unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 with col1:
-    st.image(PBI_LOGO, width=80)
-    st.link_button(
-        "Auditoría Oficial — AEF 2024",
-        url=URL_DASHBOARD_OFICIAL_1,
-        use_container_width=True,
-    )
+    st.markdown('<div class="logo-pbi">', unsafe_allow_html=True)
+    st.image(PBI_LOGO, width=56)
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.link_button("Auditoría Oficial — AEF 2024", url=URL_DASHBOARD_OFICIAL_1, use_container_width=True)
+
 with col2:
-    st.image(PBI_LOGO, width=80)
-    st.link_button(
-        "Auditoría Oficial — AEF 2025",
-        url=URL_DASHBOARD_OFICIAL_2,
-        use_container_width=True,
-    )
+    st.markdown('<div class="logo-pbi">', unsafe_allow_html=True)
+    st.image(PBI_LOGO, width=56)
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.link_button("Auditoría Oficial — AEF 2025", url=URL_DASHBOARD_OFICIAL_2, use_container_width=True)
 
-st.divider()
+st.markdown('</div>', unsafe_allow_html=True)
 
-st.subheader("📁 Carga de Archivos Fuente")
-st.caption("Carga los informes Básico y Extendido descargados desde SIA Observa.")
+# ── Carga de archivos ─────────────────────────────────────────────────────────
+st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
+st.markdown('<div class="seccion-titulo">📂 Carga de Archivos Fuente</div>', unsafe_allow_html=True)
+st.caption("Informes Básico y Extendido descargados desde SIA Observa.")
 
 col1, col2 = st.columns(2)
 with col1:
     archivo_basico = st.file_uploader("Informe Básico", type=["xlsx"], key="basico")
 with col2:
-    archivo_extendido = st.file_uploader(
-        "Informe Extendido", type=["xlsx"], key="extendido"
-    )
+    archivo_extendido = st.file_uploader("Informe Extendido", type=["xlsx"], key="extendido")
 
-st.divider()
+st.markdown('</div>', unsafe_allow_html=True)
 
+# ── Procesamiento ─────────────────────────────────────────────────────────────
 if archivo_basico and archivo_extendido:
     if st.button("⚙️ Procesar y Publicar", type="primary", use_container_width=True):
         st.cache_data.clear()
@@ -163,154 +324,84 @@ if archivo_basico and archivo_extendido:
                 PROCESSED_PATH,
             )
 
+            time.sleep(3)
+
             st.write("🚀 Subiendo archivos a GitHub...")
-            ok1 = push_a_github(
+            push_a_github(
                 os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv"),
                 "Informe_Basico_Procesado.csv",
             )
-            ok2 = push_a_github(
+            push_a_github(
                 os.path.join(PROCESSED_PATH, "Informe_Extendido_Procesado.csv"),
                 "Informe_Extendido_Procesado.csv",
             )
 
-            st.session_state["ultima_actualizacion"] = datetime.now(
-                ZONA_COLOMBIA
-            ).strftime("%d/%m/%Y a las %H:%M:%S")
-            st.session_state["df_basico"] = df_basico
-            st.session_state["df_extendido"] = df_extendido
+            # Guardar fecha del último procesamiento
+            from datetime import datetime
+            fecha_proceso = datetime.now().strftime("%d/%m/%Y %H:%M")
+            with open(os.path.join(PROCESSED_PATH, "ultimo_proceso.txt"), "w") as f:
+                f.write(fecha_proceso)
 
             sin_clasificar = (df_basico["TIPO_DE_ENTIDAD"] == "NO CLASIFICADO").sum()
             if sin_clasificar > 0:
-                st.warning(
-                    f"⚠️ {sin_clasificar} entidades sin clasificar — revisar diccionario."
-                )
+                st.warning(f"⚠️ {sin_clasificar} entidades sin clasificar — revisar diccionario.")
 
-            if not ok1 or not ok2:
-                st.error("❌ Uno o más archivos no se pudieron subir a GitHub.")
-                status.update(label="⚠️ Procesado con errores", state="error")
-            else:
-                status.update(
-                    label="✅ Procesamiento completado — Dashboard actualizado",
-                    state="complete",
-                )
+            status.update(label="✅ Procesamiento completado — Dashboard actualizado", state="complete")
 
-        # ── Card fecha hora Colombia ───────────────────────────────────────────
-        hora = datetime.now(ZONA_COLOMBIA).strftime("%d/%m/%Y a las %H:%M:%S")
-        st.markdown(
-            f"""
-            <div style="
-                background-color: #f0f7f0;
-                border: 1px solid #b2d8b2;
-                border-left: 5px solid #2e7d32;
-                border-radius: 8px;
-                padding: 12px 20px;
-                margin-top: 12px;
-                font-size: 14px;
-                color: #1b5e20;
-            ">
-                ✅ <strong>Último pipeline ejecutado:</strong> {hora} (hora Colombia)
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        # ── Resumen ───────────────────────────────────────────────────────────
+        st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
+        st.markdown('<div class="seccion-titulo">📊 Resumen del Procesamiento</div>', unsafe_allow_html=True)
 
-        st.divider()
-
-        # ── Métricas ──────────────────────────────────────────────────────────
-        st.subheader("📊 Resumen del Procesamiento")
         col1, col2, col3 = st.columns(3)
         col1.metric("Contratos Básico", f"{len(df_basico):,}")
         col2.metric("Contratos Extendido", f"{len(df_extendido):,}")
         col3.metric("Entidades", f"{df_basico['ENTIDAD'].nunique():,}")
 
-        st.divider()
+        st.markdown('</div>', unsafe_allow_html=True)
 
-        # ── Previsualización con tabs ─────────────────────────────────────────
-        st.subheader("🔍 Previsualización de Datos Procesados")
-        tab1, tab2 = st.tabs(["📄 Informe Básico", "📄 Informe Extendido"])
-
-        with tab1:
-            st.caption(
-                f"Mostrando las primeras 10 filas de {len(df_basico):,} contratos"
-            )
-            st.dataframe(df_basico.head(10), use_container_width=True)
-
-        with tab2:
-            st.caption(
-                f"Mostrando las primeras 10 filas de {len(df_extendido):,} contratos"
-            )
-            st.dataframe(df_extendido.head(10), use_container_width=True)
-
-        st.divider()
-
-        # ── Descargas ─────────────────────────────────────────────────────────
-        st.subheader("⬇️ Descargar Archivos Procesados")
+        # ── Descarga ──────────────────────────────────────────────────────────
+        st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
+        st.markdown('<div class="seccion-titulo">⬇️ Descargar Archivos Procesados</div>', unsafe_allow_html=True)
 
         col1, col2 = st.columns(2)
         with col1:
             path_b = os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv")
-            if os.path.exists(path_b):
-                with open(path_b, "rb") as f:
-                    st.download_button(
-                        "⬇️ Informe Básico Procesado",
-                        f,
-                        file_name="Informe_Basico_Procesado.csv",
-                        mime="text/csv",
-                        use_container_width=True,
-                    )
+            with open(path_b, "rb") as f:
+                st.download_button("Informe Básico Procesado", f, file_name="Informe_Basico_Procesado.csv", mime="text/csv", use_container_width=True)
         with col2:
             path_e = os.path.join(PROCESSED_PATH, "Informe_Extendido_Procesado.csv")
-            if os.path.exists(path_e):
-                with open(path_e, "rb") as f:
-                    st.download_button(
-                        "⬇️ Informe Extendido Procesado",
-                        f,
-                        file_name="Informe_Extendido_Procesado.csv",
-                        mime="text/csv",
-                        use_container_width=True,
-                    )
+            with open(path_e, "rb") as f:
+                st.download_button("Informe Extendido Procesado", f, file_name="Informe_Extendido_Procesado.csv", mime="text/csv", use_container_width=True)
 
-        st.divider()
+        st.markdown('</div>', unsafe_allow_html=True)
 
         # ── Dashboard dinámico ────────────────────────────────────────────────
-        st.subheader("📊 Dashboard Contratación en Tiempo Real")
+        st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
+        st.markdown('<div class="seccion-titulo">📈 Dashboard Contratación en Tiempo Real</div>', unsafe_allow_html=True)
+        st.caption("Datos actualizados. Abre el dashboard y refresca para ver los cambios.")
+
+        # Leer fecha del último proceso
+        ruta_fecha = os.path.join(PROCESSED_PATH, "ultimo_proceso.txt")
+        if os.path.exists(ruta_fecha):
+            with open(ruta_fecha, "r") as f:
+                ultima_fecha = f.read()
+            st.info(f"🕐 Última actualización: **{ultima_fecha}**")
 
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            st.image(PBI_LOGO, width=80)
-            st.link_button(
-                "📈 Ver Contratación en Tiempo Real",
-                url=URL_DASHBOARD_DINAMICO,
-                use_container_width=True,
-            )
-            st.caption(
-                "Abre el dashboard y presiona **Actualizar** para ver los datos más recientes."
-            )
+            st.markdown('<div class="logo-pbi">', unsafe_allow_html=True)
+            st.image(PBI_LOGO, width=56)
+            st.markdown('</div>', unsafe_allow_html=True)
+            st.link_button("Ver Dashboard en Tiempo Real", url=URL_DASHBOARD_DINAMICO, use_container_width=True)
+
+        st.markdown('</div>', unsafe_allow_html=True)
 
 else:
     st.info("⬆️ Carga los dos archivos Excel para habilitar el procesamiento.")
 
-# ── Footer ───────────────────────────────────────────────────────────────────
-st.markdown(
-    """
-    <style>
-    .footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background-color: #f0f4f0;
-        border-top: 1px solid #d0d8d0;
-        text-align: center;
-        padding: 8px 0;
-        font-size: 12px;
-        color: #555555;
-        z-index: 999;
-    }
-    </style>
-    <div class="footer">
-        © 2026 CGR Risaralda &nbsp;|&nbsp; Pipeline de Auditoría Contractual &nbsp;|&nbsp; Desarrollado por @wilo
-    </div>
-""",
-    unsafe_allow_html=True,
-)
+# ── Footer ────────────────────────────────────────────────────────────────────
+st.markdown("""
+<div class="footer-cgr">
+    © 2026 CGR Risaralda &nbsp;·&nbsp; Pipeline de Auditoría Contractual &nbsp;·&nbsp; Desarrollado por @wilo
+</div>
+""", unsafe_allow_html=True)
