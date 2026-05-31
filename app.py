@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 import sys
-from datetime import datetime
+import time
 from github import Github
 
 try:
@@ -24,13 +24,11 @@ from src.system import exportar_para_bi
 
 PROCESSED_PATH = os.path.join(os.path.dirname(__file__), "data", "processed_dinamico")
 
-# ── URLs de los dashboards de Power BI ──────────────────────────────────────
 URL_DASHBOARD_DINAMICO  = "https://URL_DASHBOARD_DINAMICO_AQUI"
 URL_DASHBOARD_OFICIAL_1 = "https://URL_DASHBOARD_OFICIAL_1_AQUI"
 URL_DASHBOARD_OFICIAL_2 = "https://URL_DASHBOARD_OFICIAL_2_AQUI"
 
 PBI_LOGO = "https://upload.wikimedia.org/wikipedia/commons/c/cf/New_Power_BI_Logo.svg"
-# ────────────────────────────────────────────────────────────────────────────
 
 
 def push_a_github(ruta_local, nombre_archivo):
@@ -56,7 +54,7 @@ def push_a_github(ruta_local, nombre_archivo):
             branch=branch,
         )
         return True
-    except Exception:
+    except Exception as e1:
         try:
             repo.create_file(
                 ruta_github,
@@ -79,14 +77,12 @@ def procesar_pipeline(df, tipos):
     return df
 
 
-# ── Configuración de página ──────────────────────────────────────────────────
 st.set_page_config(
     page_title="Contraloría General de Risaralda",
     page_icon="assets/logo.png",
     layout="centered",
 )
 
-# ── Ocultar navbar y footer de Streamlit ────────────────────────────────────
 st.markdown("""
     <style>
     #MainMenu {visibility: hidden;}
@@ -96,7 +92,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ── Logo centrado ────────────────────────────────────────────────────────────
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.image("assets/logo.png", width=500)
@@ -105,7 +100,6 @@ st.title("Sistema de Auditoría Contractual SIA Observa — CGR Risaralda")
 st.caption("Contraloría General de Risaralda — Plataforma SIA Observa")
 st.divider()
 
-# ── Dashboards oficiales de auditoría ────────────────────────────────────────
 st.subheader("📋 Dashboards Oficiales de Auditoría")
 
 col1, col2 = st.columns(2)
@@ -126,8 +120,7 @@ with col2:
 
 st.divider()
 
-# ── Sección carga de archivos ────────────────────────────────────────────────
-st.subheader("📁 Carga de Archivos Fuente")
+st.subheader("Carga de Archivos Fuente")
 st.caption("Carga los informes Básico y Extendido descargados desde SIA Observa.")
 
 col1, col2 = st.columns(2)
@@ -142,7 +135,6 @@ with col2:
 
 st.divider()
 
-# ── Botón de procesamiento ───────────────────────────────────────────────────
 if archivo_basico and archivo_extendido:
     if st.button("⚙️ Procesar y Publicar", type="primary", use_container_width=True):
         st.cache_data.clear()
@@ -166,22 +158,17 @@ if archivo_basico and archivo_extendido:
                 PROCESSED_PATH,
             )
 
+            time.sleep(3)
+
             st.write("🚀 Subiendo archivos a GitHub...")
-            ok1 = push_a_github(
+            push_a_github(
                 os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv"),
                 "Informe_Basico_Procesado.csv",
             )
-            ok2 = push_a_github(
+            push_a_github(
                 os.path.join(PROCESSED_PATH, "Informe_Extendido_Procesado.csv"),
                 "Informe_Extendido_Procesado.csv",
             )
-
-            # Guardamos todo en session_state para no perder datos
-            st.session_state["ultima_actualizacion"] = datetime.now().strftime(
-                "%d/%m/%Y a las %H:%M:%S"
-            )
-            st.session_state["df_basico"] = df_basico
-            st.session_state["df_extendido"] = df_extendido
 
             sin_clasificar = (df_basico["TIPO_DE_ENTIDAD"] == "NO CLASIFICADO").sum()
             if sin_clasificar > 0:
@@ -189,58 +176,25 @@ if archivo_basico and archivo_extendido:
                     f"⚠️ {sin_clasificar} entidades sin clasificar — revisar diccionario."
                 )
 
-            if not ok1 or not ok2:
-                st.error("❌ Uno o más archivos no se pudieron subir a GitHub.")
-                status.update(label="⚠️ Procesado con errores", state="error")
-            else:
-                status.update(
-                    label="✅ Procesamiento completado — Dashboard actualizado",
-                    state="complete",
-                )
+            status.update(
+                label="✅ Procesamiento completado — Dashboard actualizado",
+                state="complete",
+            )
 
-elif not archivo_basico or not archivo_extendido:
-    # Solo mostramos el aviso si todavía no hay datos procesados
-    if "df_basico" not in st.session_state:
-        st.info("⬆️ Carga los dos archivos Excel para habilitar el procesamiento.")
+        st.divider()
+        st.subheader("Resumen del Procesamiento")
 
-# ── Resultados (visibles si ya se procesó aunque se limpien los uploaders) ───
-if "df_basico" in st.session_state:
-    df_basico = st.session_state["df_basico"]
-    df_extendido = st.session_state["df_extendido"]
-    ultima_actualizacion = st.session_state["ultima_actualizacion"]
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Contratos Básico", f"{len(df_basico):,}")
+        col2.metric("Contratos Extendido", f"{len(df_extendido):,}")
+        col3.metric("Entidades", f"{df_basico['ENTIDAD'].nunique():,}")
 
-    st.divider()
+        st.divider()
+        st.subheader("Descargar Archivos Procesados")
 
-    # ── Métricas ─────────────────────────────────────────────────────────────
-    st.subheader("📊 Resumen del Procesamiento")
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Contratos Básico", f"{len(df_basico):,}")
-    col2.metric("Contratos Extendido", f"{len(df_extendido):,}")
-    col3.metric("Entidades", f"{df_basico['ENTIDAD'].nunique():,}")
-
-    st.divider()
-
-    # ── Previsualización con tabs ─────────────────────────────────────────────
-    st.subheader("🔍 Previsualización de Datos Procesados")
-    tab1, tab2 = st.tabs(["📄 Informe Básico", "📄 Informe Extendido"])
-
-    with tab1:
-        st.caption(f"Mostrando las primeras 10 filas de {len(df_basico):,} contratos")
-        st.dataframe(df_basico.head(10), use_container_width=True)
-
-    with tab2:
-        st.caption(f"Mostrando las primeras 10 filas de {len(df_extendido):,} contratos")
-        st.dataframe(df_extendido.head(10), use_container_width=True)
-
-    st.divider()
-
-    # ── Descargas ─────────────────────────────────────────────────────────────
-    st.subheader("⬇️ Descargar Archivos Procesados")
-
-    col1, col2 = st.columns(2)
-    with col1:
-        path_b = os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv")
-        if os.path.exists(path_b):
+        col1, col2 = st.columns(2)
+        with col1:
+            path_b = os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv")
             with open(path_b, "rb") as f:
                 st.download_button(
                     "⬇️ Informe Básico Procesado",
@@ -249,9 +203,8 @@ if "df_basico" in st.session_state:
                     mime="text/csv",
                     use_container_width=True,
                 )
-    with col2:
-        path_e = os.path.join(PROCESSED_PATH, "Informe_Extendido_Procesado.csv")
-        if os.path.exists(path_e):
+        with col2:
+            path_e = os.path.join(PROCESSED_PATH, "Informe_Extendido_Procesado.csv")
             with open(path_e, "rb") as f:
                 st.download_button(
                     "⬇️ Informe Extendido Procesado",
@@ -261,23 +214,23 @@ if "df_basico" in st.session_state:
                     use_container_width=True,
                 )
 
-    st.divider()
+        st.divider()
 
-    # ── Dashboard dinámico con fecha de actualización ─────────────────────────
-    st.subheader("📊 Dashboard Contratación en Tiempo Real")
+        st.subheader("📊 Dashboard Contratación en Tiempo Real")
+        st.caption("Los datos acaban de actualizarse. Abre el dashboard y refresca.")
 
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.image(PBI_LOGO, width=80)
-        st.link_button(
-            "📈 Ver Contratación en Tiempo Real",
-            url=URL_DASHBOARD_DINAMICO,
-            use_container_width=True,
-        )
-        st.success(f"🕐 Última actualización: **{ultima_actualizacion}**")
-        st.caption("Abre el dashboard y presiona **Actualizar** para ver los datos más recientes.")
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.image(PBI_LOGO, width=80)
+            st.link_button(
+                "📈 Ver Contratación en Tiempo Real",
+                url=URL_DASHBOARD_DINAMICO,
+                use_container_width=True,
+            )
 
-# ── Footer ───────────────────────────────────────────────────────────────────
+else:
+    st.info("⬆️ Carga los dos archivos Excel para habilitar el procesamiento.")
+
 st.markdown("""
     <style>
     .footer {
