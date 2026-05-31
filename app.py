@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import sys
 from datetime import datetime
+import pytz
 from github import Github
 
 try:
@@ -29,6 +30,8 @@ URL_DASHBOARD_OFICIAL_1 = "https://URL_DASHBOARD_OFICIAL_1_AQUI"
 URL_DASHBOARD_OFICIAL_2 = "https://URL_DASHBOARD_OFICIAL_2_AQUI"
 
 PBI_LOGO = "https://upload.wikimedia.org/wikipedia/commons/c/cf/New_Power_BI_Logo.svg"
+
+ZONA_COLOMBIA = pytz.timezone("America/Bogota")
 
 
 def push_a_github(ruta_local, nombre_archivo):
@@ -168,7 +171,7 @@ if archivo_basico and archivo_extendido:
                 "Informe_Extendido_Procesado.csv",
             )
 
-            st.session_state["ultima_actualizacion"] = datetime.now().strftime(
+            st.session_state["ultima_actualizacion"] = datetime.now(ZONA_COLOMBIA).strftime(
                 "%d/%m/%Y a las %H:%M:%S"
             )
             st.session_state["df_basico"] = df_basico
@@ -189,100 +192,95 @@ if archivo_basico and archivo_extendido:
                     state="complete",
                 )
 
-elif not archivo_basico or not archivo_extendido:
-    if "df_basico" not in st.session_state:
-        st.info("⬆️ Carga los dos archivos Excel para habilitar el procesamiento.")
-
-if "df_basico" in st.session_state:
-    df_basico = st.session_state["df_basico"]
-    df_extendido = st.session_state["df_extendido"]
-    ultima_actualizacion = st.session_state["ultima_actualizacion"]
-
-    st.divider()
-
-    # ── Métricas ─────────────────────────────────────────────────────────────
-    st.subheader("📊 Resumen del Procesamiento")
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Contratos Básico", f"{len(df_basico):,}")
-    col2.metric("Contratos Extendido", f"{len(df_extendido):,}")
-    col3.metric("Entidades", f"{df_basico['ENTIDAD'].nunique():,}")
-
-    # ── Card última ejecución ─────────────────────────────────────────────────
-    st.markdown(
-        f"""
-        <div style="
-            background-color: #f0f7f0;
-            border: 1px solid #b2d8b2;
-            border-left: 5px solid #2e7d32;
-            border-radius: 8px;
-            padding: 12px 20px;
-            margin-top: 12px;
-            font-size: 14px;
-            color: #1b5e20;
-        ">
-            ✅ <strong>Último pipeline ejecutado:</strong> {ultima_actualizacion}
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.divider()
-
-    # ── Previsualización con tabs ─────────────────────────────────────────────
-    st.subheader("🔍 Previsualización de Datos Procesados")
-    tab1, tab2 = st.tabs(["📄 Informe Básico", "📄 Informe Extendido"])
-
-    with tab1:
-        st.caption(f"Mostrando las primeras 10 filas de {len(df_basico):,} contratos")
-        st.dataframe(df_basico.head(10), use_container_width=True)
-
-    with tab2:
-        st.caption(f"Mostrando las primeras 10 filas de {len(df_extendido):,} contratos")
-        st.dataframe(df_extendido.head(10), use_container_width=True)
-
-    st.divider()
-
-    # ── Descargas ─────────────────────────────────────────────────────────────
-    st.subheader("⬇️ Descargar Archivos Procesados")
-
-    col1, col2 = st.columns(2)
-    with col1:
-        path_b = os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv")
-        if os.path.exists(path_b):
-            with open(path_b, "rb") as f:
-                st.download_button(
-                    "⬇️ Informe Básico Procesado",
-                    f,
-                    file_name="Informe_Basico_Procesado.csv",
-                    mime="text/csv",
-                    use_container_width=True,
-                )
-    with col2:
-        path_e = os.path.join(PROCESSED_PATH, "Informe_Extendido_Procesado.csv")
-        if os.path.exists(path_e):
-            with open(path_e, "rb") as f:
-                st.download_button(
-                    "⬇️ Informe Extendido Procesado",
-                    f,
-                    file_name="Informe_Extendido_Procesado.csv",
-                    mime="text/csv",
-                    use_container_width=True,
-                )
-
-    st.divider()
-
-    # ── Dashboard dinámico ────────────────────────────────────────────────────
-    st.subheader("📊 Dashboard Contratación en Tiempo Real")
-
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.image(PBI_LOGO, width=80)
-        st.link_button(
-            "📈 Ver Contratación en Tiempo Real",
-            url=URL_DASHBOARD_DINAMICO,
-            use_container_width=True,
+        # ── Card fecha hora Colombia ───────────────────────────────────────────
+        hora = datetime.now(ZONA_COLOMBIA).strftime("%d/%m/%Y a las %H:%M:%S")
+        st.markdown(
+            f"""
+            <div style="
+                background-color: #f0f7f0;
+                border: 1px solid #b2d8b2;
+                border-left: 5px solid #2e7d32;
+                border-radius: 8px;
+                padding: 12px 20px;
+                margin-top: 12px;
+                font-size: 14px;
+                color: #1b5e20;
+            ">
+                ✅ <strong>Último pipeline ejecutado:</strong> {hora} (hora Colombia)
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
-        st.caption("Abre el dashboard y presiona **Actualizar** para ver los datos más recientes.")
+
+        st.divider()
+
+        # ── Métricas ──────────────────────────────────────────────────────────
+        st.subheader("📊 Resumen del Procesamiento")
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Contratos Básico", f"{len(df_basico):,}")
+        col2.metric("Contratos Extendido", f"{len(df_extendido):,}")
+        col3.metric("Entidades", f"{df_basico['ENTIDAD'].nunique():,}")
+
+        st.divider()
+
+        # ── Previsualización con tabs ─────────────────────────────────────────
+        st.subheader("🔍 Previsualización de Datos Procesados")
+        tab1, tab2 = st.tabs(["📄 Informe Básico", "📄 Informe Extendido"])
+
+        with tab1:
+            st.caption(f"Mostrando las primeras 10 filas de {len(df_basico):,} contratos")
+            st.dataframe(df_basico.head(10), use_container_width=True)
+
+        with tab2:
+            st.caption(f"Mostrando las primeras 10 filas de {len(df_extendido):,} contratos")
+            st.dataframe(df_extendido.head(10), use_container_width=True)
+
+        st.divider()
+
+        # ── Descargas ─────────────────────────────────────────────────────────
+        st.subheader("⬇️ Descargar Archivos Procesados")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            path_b = os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv")
+            if os.path.exists(path_b):
+                with open(path_b, "rb") as f:
+                    st.download_button(
+                        "⬇️ Informe Básico Procesado",
+                        f,
+                        file_name="Informe_Basico_Procesado.csv",
+                        mime="text/csv",
+                        use_container_width=True,
+                    )
+        with col2:
+            path_e = os.path.join(PROCESSED_PATH, "Informe_Extendido_Procesado.csv")
+            if os.path.exists(path_e):
+                with open(path_e, "rb") as f:
+                    st.download_button(
+                        "⬇️ Informe Extendido Procesado",
+                        f,
+                        file_name="Informe_Extendido_Procesado.csv",
+                        mime="text/csv",
+                        use_container_width=True,
+                    )
+
+        st.divider()
+
+        # ── Dashboard dinámico ────────────────────────────────────────────────
+        st.subheader("📊 Dashboard Contratación en Tiempo Real")
+
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.image(PBI_LOGO, width=80)
+            st.link_button(
+                "📈 Ver Contratación en Tiempo Real",
+                url=URL_DASHBOARD_DINAMICO,
+                use_container_width=True,
+            )
+            st.caption("Abre el dashboard y presiona **Actualizar** para ver los datos más recientes.")
+
+else:
+    st.info("⬆️ Carga los dos archivos Excel para habilitar el procesamiento.")
 
 # ── Footer ───────────────────────────────────────────────────────────────────
 st.markdown("""
