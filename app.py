@@ -115,14 +115,14 @@ html, body, [class*="css"] {
 
 .header-institucional {
     text-align: center;
-    padding: 2rem 0 1rem 0;
+    padding: 1.5rem 0 1rem 0;
     border-bottom: 2px solid var(--verde);
     margin-bottom: 2rem;
 }
 
 .header-institucional h1 {
     font-family: 'Libre Baskerville', serif;
-    font-size: 1.6rem;
+    font-size: 2rem;
     font-weight: 700;
     color: var(--gris-texto);
     margin: 0.8rem 0 0.3rem 0;
@@ -141,7 +141,7 @@ html, body, [class*="css"] {
     background: white;
     border: 1px solid var(--borde);
     border-radius: 10px;
-    padding: 1.5rem 1.8rem;
+    padding: 1.2rem 1.8rem 1.5rem 1.8rem;
     margin-bottom: 1.5rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
@@ -226,6 +226,11 @@ hr {
     margin-bottom: 0.6rem;
 }
 
+.logo-centro {
+    text-align: center;
+    padding: 1.5rem 0 0 0;
+}
+
 .footer-cgr {
     position: fixed;
     bottom: 0;
@@ -243,9 +248,9 @@ hr {
 """, unsafe_allow_html=True)
 
 # ── Header institucional ──────────────────────────────────────────────────────
-col1, col2, col3 = st.columns([1, 2, 1])
-with col2:
-    st.image("assets/logo.png", width=220)
+st.markdown('<div class="logo-centro">', unsafe_allow_html=True)
+st.image("assets/logo.png", width=220, use_column_width=False)
+st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("""
 <div class="header-institucional">
@@ -352,19 +357,11 @@ if archivo_basico and archivo_extendido:
 
         with tab1:
             st.caption(f"{len(df_basico):,} contratos · {len(df_basico.columns)} columnas")
-            st.dataframe(
-                df_basico.head(50),
-                use_container_width=True,
-                hide_index=True,
-            )
+            st.dataframe(df_basico.head(50), use_container_width=True, hide_index=True)
 
         with tab2:
             st.caption(f"{len(df_extendido):,} contratos · {len(df_extendido.columns)} columnas")
-            st.dataframe(
-                df_extendido.head(50),
-                use_container_width=True,
-                hide_index=True,
-            )
+            st.dataframe(df_extendido.head(50), use_container_width=True, hide_index=True)
 
         st.markdown('</div>', unsafe_allow_html=True)
 
