@@ -5,6 +5,7 @@ import os
 import sys
 import time
 import base64
+import requests
 from github import Github
 
 try:
@@ -76,6 +77,49 @@ def push_a_github(ruta_local, nombre_archivo):
         except Exception as e2:
             st.error(f"Error subiendo {nombre_archivo}: {e2}")
             return False
+
+
+def actualizar_powerbi():
+    email   = os.getenv("POWERBI_EMAIL")
+    password = os.getenv("POWERBI_PASSWORD")
+    dataset  = os.getenv("POWERBI_DATASET_ID")
+
+    if not all([email, password, dataset]):
+        return False, "Variables de entorno no configuradas"
+
+    # 1. Obtener token de acceso
+    try:
+        r = requests.post(
+            "https://login.microsoftonline.com/common/oauth2/token",
+            data={
+                "grant_type": "password",
+                "resource":   "https://analysis.windows.net/powerbi/api",
+                "client_id":  "7f67af8a-fedc-4b08-8b4e-aa9179657f9d",
+                "username":   email,
+                "password":   password,
+                "scope":      "openid",
+            },
+            timeout=30,
+        )
+        token = r.json().get("access_token")
+        if not token:
+            return False, f"No se obtuvo token: {r.json().get('error_description', '')}"
+    except Exception as e:
+        return False, str(e)
+
+    # 2. Llamar al endpoint de refresco
+    try:
+        r2 = requests.post(
+            f"https://api.powerbi.com/v1.0/myorg/datasets/{dataset}/refreshes",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=30,
+        )
+        if r2.status_code == 202:
+            return True, "OK"
+        else:
+            return False, f"Status {r2.status_code}: {r2.text}"
+    except Exception as e:
+        return False, str(e)
 
 
 def procesar_pipeline(df, tipos):
@@ -248,7 +292,6 @@ html, body, [class*="css"] {{
     z-index: 999;
 }}
 
-/* Overlay spinner */
 #cgr-overlay {{
     display: none;
     position: fixed;
@@ -285,14 +328,12 @@ html, body, [class*="css"] {{
 }}
 </style>
 
-<!-- Overlay spinner DOM -->
 <div id="cgr-overlay">
     <img src="data:image/png;base64,{logo_b64}" alt="Procesando..."/>
     <p>Procesando datos de contratación pública...</p>
 </div>
 
 <script>
-// Activar overlay cuando se hace clic en el botón Procesar
 function bindSpinner() {{
     const buttons = document.querySelectorAll('button');
     buttons.forEach(btn => {{
@@ -411,6 +452,13 @@ if archivo_basico and archivo_extendido:
                     os.path.join(PROCESSED_PATH, "Informe_Extendido_Procesado.csv"),
                     "Informe_Extendido_Procesado.csv",
                 )
+
+                st.write("📊 Actualizando dashboard Power BI...")
+                ok, msg = actualizar_powerbi()
+                if ok:
+                    st.write("✅ Power BI notificado — el dashboard se actualizará en breve")
+                else:
+                    st.warning(f"⚠️ No se pudo notificar a Power BI: {msg}")
 
                 from datetime import datetime
                 fecha_proceso = datetime.now().strftime("%d/%m/%Y %H:%M")
