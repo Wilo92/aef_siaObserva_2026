@@ -260,6 +260,61 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+# ── Inyectar JS overlay spinner ───────────────────────────────────────────────
+components.html(f"""
+<script>
+function attachCGRSpinner() {{
+    const doc = window.parent.document;
+    const buttons = doc.querySelectorAll('button');
+    buttons.forEach(btn => {{
+        if (btn.innerText && btn.innerText.includes('Procesar') && !btn.dataset.cgrSpinner) {{
+            btn.dataset.cgrSpinner = '1';
+            btn.addEventListener('click', function() {{
+                if (doc.getElementById('cgr-overlay')) return;
+                const overlay = doc.createElement('div');
+                overlay.id = 'cgr-overlay';
+                overlay.style.cssText = [
+                    'position:fixed',
+                    'top:0','left:0',
+                    'width:100%','height:100%',
+                    'background:rgba(240,244,240,0.93)',
+                    'display:flex',
+                    'flex-direction:column',
+                    'align-items:center',
+                    'justify-content:center',
+                    'z-index:99999'
+                ].join(';');
+                overlay.innerHTML = `
+                    <style>
+                        @keyframes cgr-spin {{
+                            from {{ transform: rotate(0deg); }}
+                            to   {{ transform: rotate(360deg); }}
+                        }}
+                    </style>
+                    <img src="data:image/png;base64,{logo_b64}"
+                         style="width:160px;animation:cgr-spin 1.2s linear infinite;"/>
+                    <p style="margin-top:1.5rem;font-family:sans-serif;
+                              color:#2e7d32;font-size:1.1rem;letter-spacing:0.05em;
+                              text-align:center;">
+                        Procesando datos de contratación pública...
+                    </p>
+                `;
+                doc.body.appendChild(overlay);
+                setTimeout(() => {{
+                    const el = doc.getElementById('cgr-overlay');
+                    if (el) el.remove();
+                }}, 8000);
+            }});
+        }}
+    }});
+}}
+attachCGRSpinner();
+setTimeout(attachCGRSpinner, 800);
+setTimeout(attachCGRSpinner, 1600);
+setTimeout(attachCGRSpinner, 2500);
+</script>
+""", height=0)
+
 # ── Dashboards oficiales ──────────────────────────────────────────────────────
 st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
 st.markdown('<div class="seccion-titulo">📋 Dashboards Oficiales de Auditoría</div>', unsafe_allow_html=True)
@@ -306,39 +361,6 @@ if archivo_basico and archivo_extendido:
     if nombre_basico_valido and nombre_extendido_valido:
         if st.button("⚙️ Procesar y Publicar", type="primary", use_container_width=True):
             st.cache_data.clear()
-
-            # ── Spinner con logo girando en iframe ────────────────────────────
-            spinner = st.empty()
-            with spinner:
-                components.html(f"""
-                <div style="
-                    display:flex;
-                    flex-direction:column;
-                    align-items:center;
-                    justify-content:center;
-                    height:300px;
-                    background:transparent;
-                ">
-                    <img src="data:image/png;base64,{logo_b64}"
-                         style="width:140px; animation: spin 1.2s linear infinite;"/>
-                    <p style="
-                        margin-top:1.5rem;
-                        font-family:sans-serif;
-                        color:#2e7d32;
-                        font-size:1rem;
-                        letter-spacing:0.05em;
-                        text-align:center;
-                    ">Procesando datos de contratación pública...</p>
-                    <style>
-                        @keyframes spin {{
-                            from {{ transform: rotate(0deg); }}
-                            to   {{ transform: rotate(360deg); }}
-                        }}
-                    </style>
-                </div>
-                """, height=320)
-                time.sleep(3)
-            spinner.empty()
 
             with st.status("Procesando archivos...", expanded=True) as status:
 
