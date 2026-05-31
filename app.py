@@ -93,72 +93,74 @@ st.set_page_config(
     layout="centered",
 )
 
-# ── CSS personalizado ─────────────────────────────────────────────────────────
-st.markdown("""
+logo_b64 = get_logo_base64()
+
+# ── CSS + spinner overlay ─────────────────────────────────────────────────────
+st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@300;400;600&display=swap');
 
-#MainMenu {visibility: hidden;}
-header {visibility: hidden;}
-footer {visibility: hidden;}
-[data-testid="stToolbar"] {visibility: hidden;}
+#MainMenu {{visibility: hidden;}}
+header {{visibility: hidden;}}
+footer {{visibility: hidden;}}
+[data-testid="stToolbar"] {{visibility: hidden;}}
 
-:root {
+:root {{
     --verde: #2e7d32;
     --verde-claro: #e8f5e9;
     --gris-texto: #2c2c2c;
     --borde: #dde5dd;
-}
+}}
 
-.block-container {
+.block-container {{
     max-width: 820px !important;
     padding: 0 2rem 6rem 2rem !important;
-}
+}}
 
-html, body, [class*="css"] {
+html, body, [class*="css"] {{
     font-family: 'Source Sans 3', sans-serif;
     color: var(--gris-texto);
-}
+}}
 
-.header-institucional {
+.header-institucional {{
     text-align: center;
     padding: 2rem 1rem 1.5rem 1rem;
     border-bottom: 2px solid var(--verde);
     margin-bottom: 2rem;
-}
+}}
 
-.header-institucional img {
+.header-institucional img.logo-cgr {{
     width: 200px;
     margin-bottom: 1.2rem;
-}
+}}
 
-.header-institucional h1 {
+.header-institucional h1 {{
     font-family: 'Libre Baskerville', serif;
     font-size: 2rem;
     font-weight: 700;
     color: var(--gris-texto);
     margin: 0 0 0.4rem 0;
     line-height: 1.3;
-}
+}}
 
-.header-institucional p {
+.header-institucional p {{
     font-size: 0.82rem;
     color: #777;
     margin: 0;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-}
+}}
 
-.seccion-card {
+.seccion-card {{
     background: white;
     border: 1px solid var(--borde);
     border-radius: 10px;
     padding: 1.2rem 1.8rem 1.5rem 1.8rem;
     margin-bottom: 1.5rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
+}}
 
-.seccion-titulo {
+.seccion-titulo {{
     font-family: 'Libre Baskerville', serif;
     font-size: 0.95rem;
     font-weight: 700;
@@ -168,9 +170,9 @@ html, body, [class*="css"] {
     margin-bottom: 1.2rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--verde-claro);
-}
+}}
 
-[data-testid="stLinkButton"] > a {
+[data-testid="stLinkButton"] > a {{
     background-color: white !important;
     color: var(--verde) !important;
     border: 1.5px solid var(--verde) !important;
@@ -179,14 +181,14 @@ html, body, [class*="css"] {
     font-size: 0.85rem !important;
     font-weight: 600 !important;
     transition: all 0.2s ease !important;
-}
+}}
 
-[data-testid="stLinkButton"] > a:hover {
+[data-testid="stLinkButton"] > a:hover {{
     background-color: var(--verde) !important;
     color: white !important;
-}
+}}
 
-[data-testid="stButton"] > button[kind="primary"] {
+[data-testid="stButton"] > button[kind="primary"] {{
     background-color: var(--verde) !important;
     border: none !important;
     border-radius: 6px !important;
@@ -196,47 +198,46 @@ html, body, [class*="css"] {
     padding: 0.6rem 1rem !important;
     letter-spacing: 0.03em !important;
     transition: background-color 0.2s ease !important;
-}
+}}
 
-[data-testid="stButton"] > button[kind="primary"]:hover {
+[data-testid="stButton"] > button[kind="primary"]:hover {{
     background-color: #1b5e20 !important;
-}
+}}
 
-[data-testid="stMetric"] {
+[data-testid="stMetric"] {{
     background: var(--verde-claro);
     border-radius: 8px;
     padding: 0.8rem 1rem;
     border-left: 3px solid var(--verde);
-}
+}}
 
-[data-testid="stDownloadButton"] > button {
+[data-testid="stDownloadButton"] > button {{
     background-color: white !important;
     color: var(--gris-texto) !important;
     border: 1px solid var(--borde) !important;
     border-radius: 6px !important;
     font-size: 0.9rem !important;
-}
+}}
 
-[data-testid="stDownloadButton"] > button:hover {
+[data-testid="stDownloadButton"] > button:hover {{
     border-color: var(--verde) !important;
     color: var(--verde) !important;
-}
+}}
 
-[data-testid="stAlert"] {
+[data-testid="stAlert"] {{
     border-radius: 8px !important;
     font-size: 0.9rem !important;
-}
+}}
 
-.logo-pbi {
+.logo-pbi {{
     display: flex;
     justify-content: center;
     margin-bottom: 0.6rem;
-}
+}}
 
-.footer-cgr {
+.footer-cgr {{
     position: fixed;
-    bottom: 0;
-    left: 0;
+    bottom: 0; left: 0;
     width: 100%;
     background-color: var(--verde);
     text-align: center;
@@ -245,75 +246,83 @@ html, body, [class*="css"] {
     color: rgba(255,255,255,0.85);
     letter-spacing: 0.05em;
     z-index: 999;
-}
+}}
+
+/* Overlay spinner */
+#cgr-overlay {{
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(240,244,240,0.95);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+}}
+
+#cgr-overlay.active {{
+    display: flex;
+}}
+
+#cgr-overlay img {{
+    width: 160px;
+    animation: cgr-spin 1.2s linear infinite;
+}}
+
+#cgr-overlay p {{
+    margin-top: 1.5rem;
+    font-family: 'Source Sans 3', sans-serif;
+    color: #2e7d32;
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+    text-align: center;
+}}
+
+@keyframes cgr-spin {{
+    from {{ transform: rotate(0deg); }}
+    to   {{ transform: rotate(360deg); }}
+}}
 </style>
-""", unsafe_allow_html=True)
 
-# ── Header con logo en base64 ─────────────────────────────────────────────────
-logo_b64 = get_logo_base64()
-
-st.markdown(f"""
-<div class="header-institucional">
-    <img src="data:image/png;base64,{logo_b64}" alt="CGR Risaralda"/>
-    <h1>Sistema de Auditoría Contractual<br>SIA Observa</h1>
-    <p>Contraloría General de Risaralda · Control Fiscal 2026</p>
+<!-- Overlay spinner DOM -->
+<div id="cgr-overlay">
+    <img src="data:image/png;base64,{logo_b64}" alt="Procesando..."/>
+    <p>Procesando datos de contratación pública...</p>
 </div>
-""", unsafe_allow_html=True)
 
-# ── Inyectar JS overlay spinner ───────────────────────────────────────────────
-components.html(f"""
 <script>
-function attachCGRSpinner() {{
-    const doc = window.parent.document;
-    const buttons = doc.querySelectorAll('button');
+// Activar overlay cuando se hace clic en el botón Procesar
+function bindSpinner() {{
+    const buttons = document.querySelectorAll('button');
     buttons.forEach(btn => {{
-        if (btn.innerText && btn.innerText.includes('Procesar') && !btn.dataset.cgrSpinner) {{
-            btn.dataset.cgrSpinner = '1';
-            btn.addEventListener('click', function() {{
-                if (doc.getElementById('cgr-overlay')) return;
-                const overlay = doc.createElement('div');
-                overlay.id = 'cgr-overlay';
-                overlay.style.cssText = [
-                    'position:fixed',
-                    'top:0','left:0',
-                    'width:100%','height:100%',
-                    'background:rgba(240,244,240,0.93)',
-                    'display:flex',
-                    'flex-direction:column',
-                    'align-items:center',
-                    'justify-content:center',
-                    'z-index:99999'
-                ].join(';');
-                overlay.innerHTML = `
-                    <style>
-                        @keyframes cgr-spin {{
-                            from {{ transform: rotate(0deg); }}
-                            to   {{ transform: rotate(360deg); }}
-                        }}
-                    </style>
-                    <img src="data:image/png;base64,{logo_b64}"
-                         style="width:160px;animation:cgr-spin 1.2s linear infinite;"/>
-                    <p style="margin-top:1.5rem;font-family:sans-serif;
-                              color:#2e7d32;font-size:1.1rem;letter-spacing:0.05em;
-                              text-align:center;">
-                        Procesando datos de contratación pública...
-                    </p>
-                `;
-                doc.body.appendChild(overlay);
-                setTimeout(() => {{
-                    const el = doc.getElementById('cgr-overlay');
-                    if (el) el.remove();
-                }}, 8000);
+        if (btn.innerText && btn.innerText.includes('Procesar') && !btn.dataset.cgrBound) {{
+            btn.dataset.cgrBound = '1';
+            btn.addEventListener('click', () => {{
+                const ov = document.getElementById('cgr-overlay');
+                if (ov) {{
+                    ov.classList.add('active');
+                    setTimeout(() => ov.classList.remove('active'), 8000);
+                }}
             }});
         }}
     }});
 }}
-attachCGRSpinner();
-setTimeout(attachCGRSpinner, 800);
-setTimeout(attachCGRSpinner, 1600);
-setTimeout(attachCGRSpinner, 2500);
+bindSpinner();
+setTimeout(bindSpinner, 500);
+setTimeout(bindSpinner, 1200);
+setTimeout(bindSpinner, 2500);
 </script>
-""", height=0)
+""", unsafe_allow_html=True)
+
+# ── Header ────────────────────────────────────────────────────────────────────
+st.markdown(f"""
+<div class="header-institucional">
+    <img class="logo-cgr" src="data:image/png;base64,{logo_b64}" alt="CGR Risaralda"/>
+    <h1>Sistema de Auditoría Contractual<br>SIA Observa</h1>
+    <p>Contraloría General de Risaralda · Control Fiscal 2026</p>
+</div>
+""", unsafe_allow_html=True)
 
 # ── Dashboards oficiales ──────────────────────────────────────────────────────
 st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
@@ -325,7 +334,6 @@ with col1:
     st.image(PBI_LOGO, width=56)
     st.markdown('</div>', unsafe_allow_html=True)
     st.link_button("Auditoría Oficial — AEF 2024", url=URL_DASHBOARD_OFICIAL_1, use_container_width=True)
-
 with col2:
     st.markdown('<div class="logo-pbi">', unsafe_allow_html=True)
     st.image(PBI_LOGO, width=56)
@@ -368,10 +376,8 @@ if archivo_basico and archivo_extendido:
                 df_basico = pd.read_excel(archivo_basico, skiprows=1)
                 df_extendido = pd.read_excel(archivo_extendido, skiprows=1)
 
-                cols_basico_requeridas = {"NIT", "ENTIDAD", "VIGENCIA"}
-                cols_extendido_requeridas = {"NIT", "ENTIDAD", "VIGENCIA"}
-                faltantes_basico = cols_basico_requeridas - set(df_basico.columns)
-                faltantes_extendido = cols_extendido_requeridas - set(df_extendido.columns)
+                faltantes_basico = {"NIT", "ENTIDAD", "VIGENCIA"} - set(df_basico.columns)
+                faltantes_extendido = {"NIT", "ENTIDAD", "VIGENCIA"} - set(df_extendido.columns)
 
                 if faltantes_basico or faltantes_extendido:
                     if faltantes_basico:
@@ -433,11 +439,9 @@ if archivo_basico and archivo_extendido:
             st.markdown('<div class="seccion-titulo">🔍 Previsualización de Datos Procesados</div>', unsafe_allow_html=True)
 
             tab1, tab2 = st.tabs(["Informe Básico", "Informe Extendido"])
-
             with tab1:
                 st.caption(f"{len(df_basico):,} contratos · {len(df_basico.columns)} columnas")
                 st.dataframe(df_basico.head(50), use_container_width=True, hide_index=True)
-
             with tab2:
                 st.caption(f"{len(df_extendido):,} contratos · {len(df_extendido.columns)} columnas")
                 st.dataframe(df_extendido.head(50), use_container_width=True, hide_index=True)
