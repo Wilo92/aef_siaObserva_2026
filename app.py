@@ -3,11 +3,11 @@ import pandas as pd
 import os
 import sys
 import time
+import base64
 from github import Github
 
 try:
     from dotenv import load_dotenv
-
     load_dotenv()
 except ImportError:
     pass
@@ -26,12 +26,18 @@ from src.system import exportar_para_bi
 PROCESSED_PATH = os.path.join(os.path.dirname(__file__), "data", "processed_dinamico")
 
 # ── URLs de los dashboards de Power BI ──────────────────────────────────────
-URL_DASHBOARD_DINAMICO = "https://app.powerbi.com/view?r=eyJrIjoiNDlkNDg4ZmUtY2E1NC00ZTAyLWEzOWItZTVkMGZjNjJkYjYyIiwidCI6IjcxZTc1NWExLWI2ZjAtNDQyNC1hNGU1LTI1ZWQwZjY4NDhjZiIsImMiOjR9&pageName=c7af198a26c5edb2c43d"
-URL_DASHBOARD_OFICIAL_1 = "https://app.powerbi.com/view?r=eyJrIjoiOTdiMjNlMTktNzE1My00OWFlLWE2ZGMtMWYxYzVlM2RmMGUzIiwidCI6IjcxZTc1NWExLWI2ZjAtNDQyNC1hNGU1LTI1ZWQwZjY4NDhjZiIsImMiOjR9&pageName=edf64b1f73e863d583df"
-URL_DASHBOARD_OFICIAL_2 = "https://app.powerbi.com/view?r=eyJrIjoiNjhiMGZjMGUtZTUwZC00ZjYzLThjZmUtNjc5NTg5NTM1ZGIwIiwidCI6IjcxZTc1NWExLWI2ZjAtNDQyNC1hNGU1LTI1ZWQwZjY4NDhjZiIsImMiOjR9&pageName=c7af198a26c5edb2c43d"
+URL_DASHBOARD_DINAMICO  = "https://URL_DASHBOARD_DINAMICO_AQUI"
+URL_DASHBOARD_OFICIAL_1 = "https://URL_DASHBOARD_OFICIAL_1_AQUI"
+URL_DASHBOARD_OFICIAL_2 = "https://URL_DASHBOARD_OFICIAL_2_AQUI"
 
 PBI_LOGO = "https://upload.wikimedia.org/wikipedia/commons/c/cf/New_Power_BI_Logo.svg"
 # ────────────────────────────────────────────────────────────────────────────
+
+
+def get_logo_base64():
+    logo_path = os.path.join(os.path.dirname(__file__), "assets", "logo.png")
+    with open(logo_path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
 
 
 def push_a_github(ruta_local, nombre_archivo):
@@ -87,8 +93,7 @@ st.set_page_config(
 )
 
 # ── CSS personalizado ─────────────────────────────────────────────────────────
-st.markdown(
-    """
+st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@300;400;600&display=swap');
 
@@ -101,13 +106,12 @@ footer {visibility: hidden;}
     --verde: #2e7d32;
     --verde-claro: #e8f5e9;
     --gris-texto: #2c2c2c;
-    --gris-suave: #f5f6f5;
     --borde: #dde5dd;
 }
 
 .block-container {
     max-width: 820px !important;
-    padding: 2rem 2rem 6rem 2rem !important;
+    padding: 0 2rem 6rem 2rem !important;
 }
 
 html, body, [class*="css"] {
@@ -117,9 +121,14 @@ html, body, [class*="css"] {
 
 .header-institucional {
     text-align: center;
-    padding: 1.5rem 0 1rem 0;
+    padding: 2rem 1rem 1.5rem 1rem;
     border-bottom: 2px solid var(--verde);
     margin-bottom: 2rem;
+}
+
+.header-institucional img {
+    width: 200px;
+    margin-bottom: 1.2rem;
 }
 
 .header-institucional h1 {
@@ -127,15 +136,15 @@ html, body, [class*="css"] {
     font-size: 2rem;
     font-weight: 700;
     color: var(--gris-texto);
-    margin: 0.8rem 0 0.3rem 0;
+    margin: 0 0 0.4rem 0;
     line-height: 1.3;
 }
 
 .header-institucional p {
-    font-size: 0.85rem;
-    color: #666;
+    font-size: 0.82rem;
+    color: #777;
     margin: 0;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
 }
 
@@ -150,7 +159,7 @@ html, body, [class*="css"] {
 
 .seccion-titulo {
     font-family: 'Libre Baskerville', serif;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: var(--verde);
     text-transform: uppercase;
@@ -212,11 +221,6 @@ html, body, [class*="css"] {
     color: var(--verde) !important;
 }
 
-hr {
-    border-color: var(--borde) !important;
-    margin: 1.5rem 0 !important;
-}
-
 [data-testid="stAlert"] {
     border-radius: 8px !important;
     font-size: 0.9rem !important;
@@ -226,11 +230,6 @@ hr {
     display: flex;
     justify-content: center;
     margin-bottom: 0.6rem;
-}
-
-.logo-centro {
-    text-align: center;
-    padding: 1.5rem 0 0 0;
 }
 
 .footer-cgr {
@@ -247,234 +246,194 @@ hr {
     z-index: 999;
 }
 </style>
-""",
-    unsafe_allow_html=True,
-)
+""", unsafe_allow_html=True)
 
-# ── Header institucional ──────────────────────────────────────────────────────
-st.markdown('<div class="logo-centro">', unsafe_allow_html=True)
-st.image("assets/logo.png", width=220)
-st.markdown("</div>", unsafe_allow_html=True)
-
-st.markdown(
-    """
+# ── Header con logo en base64 ─────────────────────────────────────────────────
+logo_b64 = get_logo_base64()
+st.markdown(f"""
 <div class="header-institucional">
+    <img src="data:image/png;base64,{logo_b64}" alt="CGR Risaralda"/>
     <h1>Sistema de Auditoría Contractual<br>SIA Observa</h1>
     <p>Contraloría General de Risaralda · Control Fiscal 2026</p>
 </div>
-""",
-    unsafe_allow_html=True,
-)
+""", unsafe_allow_html=True)
 
 # ── Dashboards oficiales ──────────────────────────────────────────────────────
 st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
-st.markdown(
-    '<div class="seccion-titulo">📋 Dashboards Oficiales de Auditoría</div>',
-    unsafe_allow_html=True,
-)
+st.markdown('<div class="seccion-titulo">📋 Dashboards Oficiales de Auditoría</div>', unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 with col1:
     st.markdown('<div class="logo-pbi">', unsafe_allow_html=True)
     st.image(PBI_LOGO, width=56)
-    st.markdown("</div>", unsafe_allow_html=True)
-    st.link_button(
-        "Auditoría Oficial — AEF 2024",
-        url=URL_DASHBOARD_OFICIAL_1,
-        use_container_width=True,
-    )
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.link_button("Auditoría Oficial — AEF 2024", url=URL_DASHBOARD_OFICIAL_1, use_container_width=True)
 
 with col2:
     st.markdown('<div class="logo-pbi">', unsafe_allow_html=True)
     st.image(PBI_LOGO, width=56)
-    st.markdown("</div>", unsafe_allow_html=True)
-    st.link_button(
-        "Auditoría Oficial — AEF 2025",
-        url=URL_DASHBOARD_OFICIAL_2,
-        use_container_width=True,
-    )
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.link_button("Auditoría Oficial — AEF 2025", url=URL_DASHBOARD_OFICIAL_2, use_container_width=True)
 
-st.markdown("</div>", unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
 # ── Carga de archivos ─────────────────────────────────────────────────────────
 st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
-st.markdown(
-    '<div class="seccion-titulo">📂 Carga de Archivos Fuente</div>',
-    unsafe_allow_html=True,
-)
+st.markdown('<div class="seccion-titulo">📂 Carga de Archivos Fuente</div>', unsafe_allow_html=True)
 st.caption("Informes Básico y Extendido descargados desde SIA Observa.")
 
 col1, col2 = st.columns(2)
 with col1:
     archivo_basico = st.file_uploader("Informe Básico", type=["xlsx"], key="basico")
 with col2:
-    archivo_extendido = st.file_uploader(
-        "Informe Extendido", type=["xlsx"], key="extendido"
-    )
+    archivo_extendido = st.file_uploader("Informe Extendido", type=["xlsx"], key="extendido")
 
-st.markdown("</div>", unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
-# ── Procesamiento ─────────────────────────────────────────────────────────────
+# ── Validación y procesamiento ────────────────────────────────────────────────
 if archivo_basico and archivo_extendido:
-    if st.button("⚙️ Procesar y Publicar", type="primary", use_container_width=True):
-        st.cache_data.clear()
 
-        with st.status("Procesando archivos...", expanded=True) as status:
+    # Validar nombres de archivo
+    nombre_basico_valido = archivo_basico.name == "Informe_Contratos_Basico.xlsx"
+    nombre_extendido_valido = archivo_extendido.name == "Informe_Contratos_Extendido.xlsx"
 
-            st.write("📂 Leyendo archivos Excel...")
-            df_basico = pd.read_excel(archivo_basico, skiprows=1)
-            df_extendido = pd.read_excel(archivo_extendido, skiprows=1)
+    if not nombre_basico_valido:
+        st.error(f"❌ El archivo básico debe llamarse **Informe_Contratos_Basico.xlsx** — recibido: `{archivo_basico.name}`")
+    if not nombre_extendido_valido:
+        st.error(f"❌ El archivo extendido debe llamarse **Informe_Contratos_Extendido.xlsx** — recibido: `{archivo_extendido.name}`")
 
-            st.write("⚙️ Ejecutando pipeline ETL...")
-            df_basico = procesar_pipeline(df_basico, TIPOS_BASICO)
-            df_extendido = procesar_pipeline(df_extendido, TIPOS_EXTENDIDO)
+    if nombre_basico_valido and nombre_extendido_valido:
+        if st.button("⚙️ Procesar y Publicar", type="primary", use_container_width=True):
+            st.cache_data.clear()
 
-            st.write("💾 Exportando archivos procesados...")
-            exportar_para_bi(
-                {
-                    "Informe_Basico_Procesado": df_basico,
-                    "Informe_Extendido_Procesado": df_extendido,
-                },
-                PROCESSED_PATH,
-            )
+            with st.status("Procesando archivos...", expanded=True) as status:
 
-            time.sleep(3)
+                st.write("📂 Leyendo archivos Excel...")
+                df_basico = pd.read_excel(archivo_basico, skiprows=1)
+                df_extendido = pd.read_excel(archivo_extendido, skiprows=1)
 
-            st.write("🚀 Subiendo archivos a GitHub...")
-            push_a_github(
-                os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv"),
-                "Informe_Basico_Procesado.csv",
-            )
-            push_a_github(
-                os.path.join(PROCESSED_PATH, "Informe_Extendido_Procesado.csv"),
-                "Informe_Extendido_Procesado.csv",
-            )
+                # Validar columnas clave
+                cols_basico_requeridas = {"NIT", "ENTIDAD", "VIGENCIA"}
+                cols_extendido_requeridas = {"NIT", "ENTIDAD", "VIGENCIA"}
+                cols_basico_actual = set(df_basico.columns)
+                cols_extendido_actual = set(df_extendido.columns)
 
-            from datetime import datetime
+                faltantes_basico = cols_basico_requeridas - cols_basico_actual
+                faltantes_extendido = cols_extendido_requeridas - cols_extendido_actual
 
-            fecha_proceso = datetime.now().strftime("%d/%m/%Y %H:%M")
-            with open(os.path.join(PROCESSED_PATH, "ultimo_proceso.txt"), "w") as f:
-                f.write(fecha_proceso)
+                if faltantes_basico or faltantes_extendido:
+                    if faltantes_basico:
+                        st.error(f"❌ Informe Básico no tiene las columnas esperadas: {faltantes_basico}")
+                    if faltantes_extendido:
+                        st.error(f"❌ Informe Extendido no tiene las columnas esperadas: {faltantes_extendido}")
+                    status.update(label="❌ Error de validación", state="error")
+                    st.stop()
 
-            sin_clasificar = (df_basico["TIPO_DE_ENTIDAD"] == "NO CLASIFICADO").sum()
-            if sin_clasificar > 0:
-                st.warning(
-                    f"⚠️ {sin_clasificar} entidades sin clasificar — revisar diccionario."
+                st.write("⚙️ Ejecutando pipeline ETL...")
+                df_basico = procesar_pipeline(df_basico, TIPOS_BASICO)
+                df_extendido = procesar_pipeline(df_extendido, TIPOS_EXTENDIDO)
+
+                st.write("💾 Exportando archivos procesados...")
+                exportar_para_bi(
+                    {
+                        "Informe_Basico_Procesado": df_basico,
+                        "Informe_Extendido_Procesado": df_extendido,
+                    },
+                    PROCESSED_PATH,
                 )
 
-            status.update(
-                label="✅ Procesamiento completado — Dashboard actualizado",
-                state="complete",
-            )
+                time.sleep(3)
 
-        # ── Resumen ───────────────────────────────────────────────────────────
-        st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
-        st.markdown(
-            '<div class="seccion-titulo">📊 Resumen del Procesamiento</div>',
-            unsafe_allow_html=True,
-        )
-
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Contratos Básico", f"{len(df_basico):,}")
-        col2.metric("Contratos Extendido", f"{len(df_extendido):,}")
-        col3.metric("Entidades", f"{df_basico['ENTIDAD'].nunique():,}")
-
-        st.markdown("</div>", unsafe_allow_html=True)
-
-        # ── Previsualización ──────────────────────────────────────────────────
-        st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
-        st.markdown(
-            '<div class="seccion-titulo">🔍 Previsualización de Datos Procesados</div>',
-            unsafe_allow_html=True,
-        )
-
-        tab1, tab2 = st.tabs(["Informe Básico", "Informe Extendido"])
-
-        with tab1:
-            st.caption(
-                f"{len(df_basico):,} contratos · {len(df_basico.columns)} columnas"
-            )
-            st.dataframe(df_basico.head(50), use_container_width=True, hide_index=True)
-
-        with tab2:
-            st.caption(
-                f"{len(df_extendido):,} contratos · {len(df_extendido.columns)} columnas"
-            )
-            st.dataframe(
-                df_extendido.head(50), use_container_width=True, hide_index=True
-            )
-
-        st.markdown("</div>", unsafe_allow_html=True)
-
-        # ── Descarga ──────────────────────────────────────────────────────────
-        st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
-        st.markdown(
-            '<div class="seccion-titulo">⬇️ Descargar Archivos Procesados</div>',
-            unsafe_allow_html=True,
-        )
-
-        col1, col2 = st.columns(2)
-        with col1:
-            path_b = os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv")
-            with open(path_b, "rb") as f:
-                st.download_button(
-                    "Informe Básico Procesado",
-                    f,
-                    file_name="Informe_Basico_Procesado.csv",
-                    mime="text/csv",
-                    use_container_width=True,
+                st.write("🚀 Subiendo archivos a GitHub...")
+                push_a_github(
+                    os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv"),
+                    "Informe_Basico_Procesado.csv",
                 )
-        with col2:
-            path_e = os.path.join(PROCESSED_PATH, "Informe_Extendido_Procesado.csv")
-            with open(path_e, "rb") as f:
-                st.download_button(
-                    "Informe Extendido Procesado",
-                    f,
-                    file_name="Informe_Extendido_Procesado.csv",
-                    mime="text/csv",
-                    use_container_width=True,
+                push_a_github(
+                    os.path.join(PROCESSED_PATH, "Informe_Extendido_Procesado.csv"),
+                    "Informe_Extendido_Procesado.csv",
                 )
 
-        st.markdown("</div>", unsafe_allow_html=True)
+                from datetime import datetime
+                fecha_proceso = datetime.now().strftime("%d/%m/%Y %H:%M")
+                with open(os.path.join(PROCESSED_PATH, "ultimo_proceso.txt"), "w") as f:
+                    f.write(fecha_proceso)
 
-        # ── Dashboard dinámico ────────────────────────────────────────────────
-        st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
-        st.markdown(
-            '<div class="seccion-titulo">📈 Dashboard Contratación en Tiempo Real</div>',
-            unsafe_allow_html=True,
-        )
-        st.caption(
-            "Datos actualizados. Abre el dashboard y refresca para ver los cambios."
-        )
+                sin_clasificar = (df_basico["TIPO_DE_ENTIDAD"] == "NO CLASIFICADO").sum()
+                if sin_clasificar > 0:
+                    st.warning(f"⚠️ {sin_clasificar} entidades sin clasificar — revisar diccionario.")
 
-        ruta_fecha = os.path.join(PROCESSED_PATH, "ultimo_proceso.txt")
-        if os.path.exists(ruta_fecha):
-            with open(ruta_fecha, "r") as f:
-                ultima_fecha = f.read()
-            st.info(f"🕐 Última actualización: **{ultima_fecha}**")
+                status.update(label="✅ Procesamiento completado — Dashboard actualizado", state="complete")
 
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            st.markdown('<div class="logo-pbi">', unsafe_allow_html=True)
-            st.image(PBI_LOGO, width=56)
-            st.markdown("</div>", unsafe_allow_html=True)
-            st.link_button(
-                "Ver Dashboard en Tiempo Real",
-                url=URL_DASHBOARD_DINAMICO,
-                use_container_width=True,
-            )
+            # ── Resumen ───────────────────────────────────────────────────────
+            st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
+            st.markdown('<div class="seccion-titulo">📊 Resumen del Procesamiento</div>', unsafe_allow_html=True)
 
-        st.markdown("</div>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns(3)
+            col1.metric("Contratos Básico", f"{len(df_basico):,}")
+            col2.metric("Contratos Extendido", f"{len(df_extendido):,}")
+            col3.metric("Entidades", f"{df_basico['ENTIDAD'].nunique():,}")
+
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            # ── Previsualización ──────────────────────────────────────────────
+            st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
+            st.markdown('<div class="seccion-titulo">🔍 Previsualización de Datos Procesados</div>', unsafe_allow_html=True)
+
+            tab1, tab2 = st.tabs(["Informe Básico", "Informe Extendido"])
+
+            with tab1:
+                st.caption(f"{len(df_basico):,} contratos · {len(df_basico.columns)} columnas")
+                st.dataframe(df_basico.head(50), use_container_width=True, hide_index=True)
+
+            with tab2:
+                st.caption(f"{len(df_extendido):,} contratos · {len(df_extendido.columns)} columnas")
+                st.dataframe(df_extendido.head(50), use_container_width=True, hide_index=True)
+
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            # ── Descarga ──────────────────────────────────────────────────────
+            st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
+            st.markdown('<div class="seccion-titulo">⬇️ Descargar Archivos Procesados</div>', unsafe_allow_html=True)
+
+            col1, col2 = st.columns(2)
+            with col1:
+                path_b = os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv")
+                with open(path_b, "rb") as f:
+                    st.download_button("Informe Básico Procesado", f, file_name="Informe_Basico_Procesado.csv", mime="text/csv", use_container_width=True)
+            with col2:
+                path_e = os.path.join(PROCESSED_PATH, "Informe_Extendido_Procesado.csv")
+                with open(path_e, "rb") as f:
+                    st.download_button("Informe Extendido Procesado", f, file_name="Informe_Extendido_Procesado.csv", mime="text/csv", use_container_width=True)
+
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            # ── Dashboard dinámico ────────────────────────────────────────────
+            st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
+            st.markdown('<div class="seccion-titulo">📈 Dashboard Contratación en Tiempo Real</div>', unsafe_allow_html=True)
+            st.caption("Datos actualizados. Abre el dashboard y refresca para ver los cambios.")
+
+            ruta_fecha = os.path.join(PROCESSED_PATH, "ultimo_proceso.txt")
+            if os.path.exists(ruta_fecha):
+                with open(ruta_fecha, "r") as f:
+                    ultima_fecha = f.read()
+                st.info(f"🕐 Última actualización: **{ultima_fecha}**")
+
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                st.markdown('<div class="logo-pbi">', unsafe_allow_html=True)
+                st.image(PBI_LOGO, width=56)
+                st.markdown('</div>', unsafe_allow_html=True)
+                st.link_button("Ver Dashboard en Tiempo Real", url=URL_DASHBOARD_DINAMICO, use_container_width=True)
+
+            st.markdown('</div>', unsafe_allow_html=True)
 
 else:
     st.info("⬆️ Carga los dos archivos Excel para habilitar el procesamiento.")
 
 # ── Footer ────────────────────────────────────────────────────────────────────
-st.markdown(
-    """
+st.markdown("""
 <div class="footer-cgr">
     © 2026 CGR Risaralda &nbsp;·&nbsp; Pipeline de Auditoría Contractual &nbsp;·&nbsp; Desarrollado por @wilo
 </div>
-""",
-    unsafe_allow_html=True,
-)
+""", unsafe_allow_html=True)
