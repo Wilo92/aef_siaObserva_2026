@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 import os
 import sys
@@ -245,33 +246,6 @@ html, body, [class*="css"] {
     letter-spacing: 0.05em;
     z-index: 999;
 }
-
-@keyframes girar {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
-}
-
-.spinner-cgr {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 3rem 0;
-}
-
-.spinner-cgr img {
-    width: 120px;
-    animation: girar 1.5s linear infinite;
-    margin-bottom: 1.2rem;
-}
-
-.spinner-cgr p {
-    font-family: 'Source Sans 3', sans-serif;
-    color: var(--verde);
-    font-size: 0.95rem;
-    letter-spacing: 0.05em;
-    margin: 0;
-}
 </style>
 """, unsafe_allow_html=True)
 
@@ -333,15 +307,37 @@ if archivo_basico and archivo_extendido:
         if st.button("⚙️ Procesar y Publicar", type="primary", use_container_width=True):
             st.cache_data.clear()
 
-            # ── Spinner con logo girando ──────────────────────────────────────
+            # ── Spinner con logo girando en iframe ────────────────────────────
             spinner = st.empty()
-            spinner.markdown(f"""
-            <div class="spinner-cgr">
-                <img src="data:image/png;base64,{logo_b64}" alt="Procesando..."/>
-                <p>Procesando datos de contratación pública...</p>
-            </div>
-            """, unsafe_allow_html=True)
-            time.sleep(2)
+            with spinner:
+                components.html(f"""
+                <div style="
+                    display:flex;
+                    flex-direction:column;
+                    align-items:center;
+                    justify-content:center;
+                    height:300px;
+                    background:transparent;
+                ">
+                    <img src="data:image/png;base64,{logo_b64}"
+                         style="width:140px; animation: spin 1.2s linear infinite;"/>
+                    <p style="
+                        margin-top:1.5rem;
+                        font-family:sans-serif;
+                        color:#2e7d32;
+                        font-size:1rem;
+                        letter-spacing:0.05em;
+                        text-align:center;
+                    ">Procesando datos de contratación pública...</p>
+                    <style>
+                        @keyframes spin {{
+                            from {{ transform: rotate(0deg); }}
+                            to   {{ transform: rotate(360deg); }}
+                        }}
+                    </style>
+                </div>
+                """, height=320)
+                time.sleep(3)
             spinner.empty()
 
             with st.status("Procesando archivos...", expanded=True) as status:
