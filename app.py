@@ -8,6 +8,7 @@ from github import Github
 
 try:
     from dotenv import load_dotenv
+
     load_dotenv()
 except ImportError:
     pass
@@ -25,9 +26,9 @@ from src.system import exportar_para_bi
 
 PROCESSED_PATH = os.path.join(os.path.dirname(__file__), "data", "processed_dinamico")
 
-URL_DASHBOARD_DINAMICO  = "https://URL_DASHBOARD_DINAMICO_AQUI"
-URL_DASHBOARD_OFICIAL_1 = "https://URL_DASHBOARD_OFICIAL_1_AQUI"
-URL_DASHBOARD_OFICIAL_2 = "https://URL_DASHBOARD_OFICIAL_2_AQUI"
+URL_DASHBOARD_DINAMICO = "https://app.powerbi.com/view?r=eyJrIjoiNDlkNDg4ZmUtY2E1NC00ZTAyLWEzOWItZTVkMGZjNjJkYjYyIiwidCI6IjcxZTc1NWExLWI2ZjAtNDQyNC1hNGU1LTI1ZWQwZjY4NDhjZiIsImMiOjR9&pageName=c7af198a26c5edb2c43d"
+URL_DASHBOARD_OFICIAL_1 = "https://app.powerbi.com/view?r=eyJrIjoiOTdiMjNlMTktNzE1My00OWFlLWE2ZGMtMWYxYzVlM2RmMGUzIiwidCI6IjcxZTc1NWExLWI2ZjAtNDQyNC1hNGU1LTI1ZWQwZjY4NDhjZiIsImMiOjR9&pageName=edf64b1f73e863d583df"
+URL_DASHBOARD_OFICIAL_2 = "https://app.powerbi.com/view?r=eyJrIjoiNjhiMGZjMGUtZTUwZC00ZjYzLThjZmUtNjc5NTg5NTM1ZGIwIiwidCI6IjcxZTc1NWExLWI2ZjAtNDQyNC1hNGU1LTI1ZWQwZjY4NDhjZiIsImMiOjR9&pageName=c7af198a26c5edb2c43d"
 
 PBI_LOGO = "https://upload.wikimedia.org/wikipedia/commons/c/cf/New_Power_BI_Logo.svg"
 
@@ -86,14 +87,17 @@ st.set_page_config(
     layout="centered",
 )
 
-st.markdown("""
+st.markdown(
+    """
     <style>
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     footer {visibility: hidden;}
     [data-testid="stToolbar"] {visibility: hidden;}
     </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
@@ -109,14 +113,14 @@ col1, col2 = st.columns(2)
 with col1:
     st.image(PBI_LOGO, width=80)
     st.link_button(
-        "Auditoría Oficial — Muestra 1",
+        "Auditoría Oficial — AEF 2024",
         url=URL_DASHBOARD_OFICIAL_1,
         use_container_width=True,
     )
 with col2:
     st.image(PBI_LOGO, width=80)
     st.link_button(
-        "Auditoría Oficial — Muestra 2",
+        "Auditoría Oficial — AEF 2025",
         url=URL_DASHBOARD_OFICIAL_2,
         use_container_width=True,
     )
@@ -128,9 +132,7 @@ st.caption("Carga los informes Básico y Extendido descargados desde SIA Observa
 
 col1, col2 = st.columns(2)
 with col1:
-    archivo_basico = st.file_uploader(
-        "Informe Básico", type=["xlsx"], key="basico"
-    )
+    archivo_basico = st.file_uploader("Informe Básico", type=["xlsx"], key="basico")
 with col2:
     archivo_extendido = st.file_uploader(
         "Informe Extendido", type=["xlsx"], key="extendido"
@@ -171,9 +173,9 @@ if archivo_basico and archivo_extendido:
                 "Informe_Extendido_Procesado.csv",
             )
 
-            st.session_state["ultima_actualizacion"] = datetime.now(ZONA_COLOMBIA).strftime(
-                "%d/%m/%Y a las %H:%M:%S"
-            )
+            st.session_state["ultima_actualizacion"] = datetime.now(
+                ZONA_COLOMBIA
+            ).strftime("%d/%m/%Y a las %H:%M:%S")
             st.session_state["df_basico"] = df_basico
             st.session_state["df_extendido"] = df_extendido
 
@@ -228,11 +230,15 @@ if archivo_basico and archivo_extendido:
         tab1, tab2 = st.tabs(["📄 Informe Básico", "📄 Informe Extendido"])
 
         with tab1:
-            st.caption(f"Mostrando las primeras 10 filas de {len(df_basico):,} contratos")
+            st.caption(
+                f"Mostrando las primeras 10 filas de {len(df_basico):,} contratos"
+            )
             st.dataframe(df_basico.head(10), use_container_width=True)
 
         with tab2:
-            st.caption(f"Mostrando las primeras 10 filas de {len(df_extendido):,} contratos")
+            st.caption(
+                f"Mostrando las primeras 10 filas de {len(df_extendido):,} contratos"
+            )
             st.dataframe(df_extendido.head(10), use_container_width=True)
 
         st.divider()
@@ -277,13 +283,16 @@ if archivo_basico and archivo_extendido:
                 url=URL_DASHBOARD_DINAMICO,
                 use_container_width=True,
             )
-            st.caption("Abre el dashboard y presiona **Actualizar** para ver los datos más recientes.")
+            st.caption(
+                "Abre el dashboard y presiona **Actualizar** para ver los datos más recientes."
+            )
 
 else:
     st.info("⬆️ Carga los dos archivos Excel para habilitar el procesamiento.")
 
 # ── Footer ───────────────────────────────────────────────────────────────────
-st.markdown("""
+st.markdown(
+    """
     <style>
     .footer {
         position: fixed;
@@ -302,4 +311,6 @@ st.markdown("""
     <div class="footer">
         © 2026 CGR Risaralda &nbsp;|&nbsp; Pipeline de Auditoría Contractual &nbsp;|&nbsp; Desarrollado por @wilo
     </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
