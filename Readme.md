@@ -193,15 +193,15 @@ jupyter notebook notebooks/analisis_contratacion_2026.ipynb
 
 ##  Última Actualización del Pipeline
 
-**01/06/2026 09:36** (hora Colombia)
+**01/06/2026 09:43** (hora Colombia)
 
 ##  Estadísticas del Último Proceso
 
 | Métrica | Valor |
 |---------|-------|
-| Contratos Básico procesados | 8,288 |
-| Contratos Extendido procesados | 8,159 |
-| Entidades analizadas | 53 |
+| Contratos Básico procesados | 10,051 |
+| Contratos Extendido procesados | 10,051 |
+| Entidades analizadas | 133 |
 
 ---
 
