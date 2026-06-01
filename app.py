@@ -101,20 +101,20 @@ def push_log_a_github(fecha_proceso, n_basico, n_extendido, n_entidades):
         contenido_nuevo = contenido_actual + nueva_fila
         repo.update_file(
             ruta_log,
-            f"📊 Log pipeline: {fecha_proceso}",
+            f"Log pipeline: {fecha_proceso}",
             contenido_nuevo,
             archivo.sha,
             branch=branch,
         )
     except Exception:
         encabezado = (
-            "# 📋 Historial de Procesos — CGR Risaralda\n\n"
+            "# Historial de Procesos — CGR Risaralda\n\n"
             "| Fecha | Contratos Básico | Contratos Extendido | Entidades |\n"
             "|-------|-----------------|--------------------|-----------|\n"
         )
         repo.create_file(
             ruta_log,
-            f"📊 Creación log pipeline: {fecha_proceso}",
+            f"Creación log pipeline: {fecha_proceso}",
             encabezado + nueva_fila,
             branch=branch,
         )
@@ -136,7 +136,7 @@ def push_fecha_a_github(fecha_proceso):
         archivo_existente = repo.get_contents(ruta_github, ref=branch)
         repo.update_file(
             ruta_github,
-            f"🕐 Último proceso: {fecha_proceso}",
+            f"Último proceso: {fecha_proceso}",
             contenido,
             archivo_existente.sha,
             branch=branch,
@@ -144,7 +144,7 @@ def push_fecha_a_github(fecha_proceso):
     except Exception:
         repo.create_file(
             ruta_github,
-            f"🕐 Último proceso: {fecha_proceso}",
+            f"Último proceso: {fecha_proceso}",
             contenido,
             branch=branch,
         )
@@ -159,7 +159,7 @@ def push_readme_a_github(fecha_proceso, n_basico, n_extendido, n_entidades):
     g = Github(token)
     repo = g.get_repo(repo_nombre)
 
-    contenido_readme = f"""# 🏛️ Auditoría a la Contratación Pública 2025 — 53 Sujetos de Control
+    contenido_readme = f"""#  Auditoría a la Contratación Pública 2025 — 53 Sujetos de Control
 ## Contraloría General de Risaralda · Plataforma SIA Observa
 
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat&logo=python&logoColor=white)
@@ -170,7 +170,7 @@ def push_readme_a_github(fecha_proceso, n_basico, n_extendido, n_entidades):
 
 ---
 
-## 📌 Descripción General
+##  Descripción General
 
 Este proyecto realiza un análisis técnico de la contratación pública reportada por los sujetos de control en la plataforma SIA Observa, con énfasis en la vigencia 2025.
 
@@ -180,11 +180,11 @@ Su propósito es fortalecer el control fiscal, mejorar la trazabilidad de la inf
 
 ---
 
-## 🎯 Objetivo General
+##  Objetivo General
 
 Analizar el comportamiento de la contratación pública reportada en SIA Observa para la vigencia 2025, con criterios de control fiscal y transparencia, a fin de identificar patrones relevantes, riesgos potenciales y oportunidades de mejora en la rendición de información.
 
-## 🎯 Objetivos Específicos
+##  Objetivos Específicos
 
 - Estandarizar y depurar los registros contractuales para mejorar su calidad y comparabilidad analítica.
 - Caracterizar la contratación pública según modalidad, tipo de contrato, entidad, origen de recursos y comportamiento temporal.
@@ -196,7 +196,7 @@ Analizar el comportamiento de la contratación pública reportada en SIA Observa
 
 ---
 
-## 📐 Alcance del Análisis
+##  Alcance del Análisis
 
 - **Cobertura temática:** Información de contratación pública reportada en SIA Observa, incluyendo informes básico y extendido.
 - **Cobertura temporal:** Vigencia contractual 2025.
@@ -205,7 +205,7 @@ Analizar el comportamiento de la contratación pública reportada en SIA Observa
 
 ---
 
-## 🗂️ Fuente de Datos
+##  Fuente de Datos
 
 La fuente principal corresponde a los reportes descargados desde **SIA Observa**, plataforma de rendición de información contractual de la Contraloría General de Risaralda para los 53 sujetos de control.
 
@@ -214,7 +214,7 @@ La fuente principal corresponde a los reportes descargados desde **SIA Observa**
 | `Informe_Contratos_Basico.xlsx` | Variables generales del contrato y estado de rendición | Descarga SIA Observa |
 | `Informe_Contratos_Extendido.xlsx` | Variables adicionales de objeto, recursos y rubros | Descarga SIA Observa |
 
-### ⚠️ Consideraciones de la Fuente
+###  Consideraciones de la Fuente
 
 - La calidad depende de la oportunidad y consistencia del cargue por cada entidad.
 - Pueden existir registros actualizados de manera posterior al corte de análisis.
@@ -223,7 +223,7 @@ La fuente principal corresponde a los reportes descargados desde **SIA Observa**
 
 ---
 
-## 🔬 Metodología
+##  Metodología
 
 1. **Ingesta de datos:** lectura de archivos fuente en formato Excel.
 2. **Depuración y tipificación:** conversión de tipos de dato (texto, fechas, numéricos), control de nulos y normalización de encabezados.
@@ -234,7 +234,7 @@ La fuente principal corresponde a los reportes descargados desde **SIA Observa**
 
 ---
 
-## 📊 Principales Análisis
+##  Principales Análisis
 
 - Conteo de contratos y sumatoria de valor vigente.
 - Distribución por modalidad de contratación (categoría estandarizada).
@@ -246,7 +246,7 @@ La fuente principal corresponde a los reportes descargados desde **SIA Observa**
 
 ---
 
-## ⚙️ Flujo del Pipeline Automatizado
+##  Flujo del Pipeline Automatizado
 
 ```
 Archivos SIA Observa (.xlsx)
@@ -269,7 +269,7 @@ Archivos SIA Observa (.xlsx)
 
 ---
 
-## 📂 Estructura del Repositorio
+##  Estructura del Repositorio
 
 ```
 aef_siaObserva_2026/
@@ -299,7 +299,7 @@ aef_siaObserva_2026/
 
 ---
 
-## 📈 Dashboards Power BI
+##  Dashboards Power BI
 
 | Dashboard | Descripción |
 |-----------|-------------|
@@ -309,7 +309,7 @@ aef_siaObserva_2026/
 
 ---
 
-## 🚀 Cómo Usar la App Web
+##  Cómo Usar la App Web
 
 1. Descarga los archivos desde **SIA Observa**:
    - `Informe_Contratos_Basico.xlsx`
@@ -320,7 +320,7 @@ aef_siaObserva_2026/
 5. Espera a que el pipeline termine
 6. Abre el dashboard de Power BI y refresca
 
-## 💻 Cómo Ejecutar el Proyecto Localmente
+##  Cómo Ejecutar el Proyecto Localmente
 
 ```bash
 # 1. Crear entorno virtual
@@ -339,7 +339,7 @@ jupyter notebook notebooks/analisis_contratacion_2026.ipynb
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+##  Tecnologías Utilizadas
 
 - **Python 3.12**
 - **Streamlit 1.45.1** — interfaz web
@@ -352,11 +352,11 @@ jupyter notebook notebooks/analisis_contratacion_2026.ipynb
 
 ---
 
-## 🕐 Última Actualización del Pipeline
+##  Última Actualización del Pipeline
 
 **{fecha_proceso}** (hora Colombia)
 
-## 📊 Estadísticas del Último Proceso
+##  Estadísticas del Último Proceso
 
 | Métrica | Valor |
 |---------|-------|
@@ -366,14 +366,14 @@ jupyter notebook notebooks/analisis_contratacion_2026.ipynb
 
 ---
 
-## ✅ Conclusiones
+##  Conclusiones
 
 El proyecto proporciona una base analítica reproducible para el seguimiento de la contratación pública reportada en SIA Observa.
 La estandarización de variables y la generación de alertas facilitan la identificación de patrones relevantes para priorizar actuaciones auditoras y robustecer la toma de decisiones institucionales.
 
 ---
 
-## 👤 Autor
+##  Autor
 
 **Wilmer Fidel Restrepo Orrego**
 Técnico Operativo – Código 314-05
@@ -386,7 +386,7 @@ Mayo de 2026
         archivo = repo.get_contents("Readme.md", ref=branch)
         repo.update_file(
             "Readme.md",
-            f"📝 Readme actualizado: {fecha_proceso}",
+            f"Readme actualizado: {fecha_proceso}",
             contenido_readme,
             archivo.sha,
             branch=branch,
@@ -394,7 +394,7 @@ Mayo de 2026
     except Exception:
         repo.create_file(
             "Readme.md",
-            f"📝 Readme inicial: {fecha_proceso}",
+            f"Readme inicial: {fecha_proceso}",
             contenido_readme,
             branch=branch,
         )
@@ -402,7 +402,7 @@ Mayo de 2026
     # ── 2. README.md: historial de cada ejecución ─────────────────────────────
     nueva_entrada = f"| {fecha_proceso} | {n_basico:,} | {n_extendido:,} | {n_entidades:,} |\n"
     encabezado_hist = (
-        "# 📋 Historial de Ejecuciones del Pipeline — CGR Risaralda\n\n"
+        "# Historial de Ejecuciones del Pipeline — CGR Risaralda\n\n"
         "| Fecha | Contratos Básico | Contratos Extendido | Entidades |\n"
         "|-------|:---------------:|:------------------:|:---------:|\n"
     )
@@ -417,7 +417,7 @@ Mayo de 2026
             nuevo_contenido = encabezado_hist + nueva_entrada
         repo.update_file(
             "README.md",
-            f"📋 Historial: {fecha_proceso}",
+            f"Historial: {fecha_proceso}",
             nuevo_contenido,
             archivo_hist.sha,
             branch=branch,
@@ -425,7 +425,7 @@ Mayo de 2026
     except Exception:
         repo.create_file(
             "README.md",
-            f"📋 Historial iniciado: {fecha_proceso}",
+            f"Historial iniciado: {fecha_proceso}",
             encabezado_hist + nueva_entrada,
             branch=branch,
         )
@@ -845,7 +845,7 @@ if archivo_basico and archivo_extendido:
                     f.write(fecha_proceso)
 
                 # ── NUEVO: log de historial ───────────────────────────────────
-                st.write("📋 Actualizando log de historial...")
+                st.write("Actualizando log de historial...")
                 push_log_a_github(
                     fecha_proceso,
                     len(df_basico),
@@ -854,11 +854,11 @@ if archivo_basico and archivo_extendido:
                 )
 
                 # ── NUEVO: commit de ultimo_proceso.txt ───────────────────────
-                st.write("🕐 Registrando fecha de proceso...")
+                st.write("Registrando fecha de proceso...")
                 push_fecha_a_github(fecha_proceso)
 
                 # ── NUEVO: README dinámico ────────────────────────────────────
-                st.write("📝 Actualizando README del repositorio...")
+                st.write("Actualizando README del repositorio...")
                 push_readme_a_github(
                     fecha_proceso,
                     len(df_basico),
@@ -953,7 +953,7 @@ if archivo_basico and archivo_extendido:
             # ── Dashboard dinámico ────────────────────────────────────────────
             st.markdown('<div class="seccion-card">', unsafe_allow_html=True)
             st.markdown(
-                '<div class="seccion-titulo">📈 Ver el Dashboard de Contratación en Tiempo Real</div>',
+                '<div class="seccion-titulo">Ver el Dashboard de Contratación en Tiempo Real</div>',
                 unsafe_allow_html=True,
             )
             st.caption(
