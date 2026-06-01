@@ -400,25 +400,29 @@ Mayo de 2026
         )
 
     # ── 2. README.md: historial de cada ejecución ─────────────────────────────
-    nueva_entrada = (
-        f"| {fecha_proceso} | {n_basico:,} | {n_extendido:,} | {n_entidades:,} |\n"
+    nueva_entrada = f"| {fecha_proceso} | {n_basico:,} | {n_extendido:,} | {n_entidades:,} |\n"
+    encabezado_hist = (
+        "# 📋 Historial de Ejecuciones del Pipeline — CGR Risaralda\n\n"
+        "| Fecha | Contratos Básico | Contratos Extendido | Entidades |\n"
+        "|-------|:---------------:|:------------------:|:---------:|\n"
     )
     try:
         archivo_hist = repo.get_contents("README.md", ref=branch)
         contenido_actual = archivo_hist.decoded_content.decode("utf-8")
+        # Si ya tiene el encabezado correcto solo agregar fila
+        if "Historial de Ejecuciones" in contenido_actual:
+            nuevo_contenido = contenido_actual + nueva_entrada
+        else:
+            # Reemplazar contenido viejo con historial limpio
+            nuevo_contenido = encabezado_hist + nueva_entrada
         repo.update_file(
             "README.md",
             f"📋 Historial: {fecha_proceso}",
-            contenido_actual + nueva_entrada,
+            nuevo_contenido,
             archivo_hist.sha,
             branch=branch,
         )
     except Exception:
-        encabezado_hist = (
-            "# 📋 Historial de Ejecuciones del Pipeline — CGR Risaralda\n\n"
-            "| Fecha | Contratos Básico | Contratos Extendido | Entidades |\n"
-            "|-------|-----------------|--------------------|-----------||\n"
-        )
         repo.create_file(
             "README.md",
             f"📋 Historial iniciado: {fecha_proceso}",
