@@ -83,6 +83,45 @@ def push_a_github(ruta_local, nombre_archivo):
             return False
 
 
+# ── NUEVO: Log de historial de procesos ──────────────────────────────────────
+def push_log_a_github(fecha_proceso, n_basico, n_extendido, n_entidades):
+    token = os.getenv("GITHUB_TOKEN")
+    repo_nombre = os.getenv("GITHUB_REPO")
+    branch = os.getenv("GITHUB_BRANCH")
+
+    g = Github(token)
+    repo = g.get_repo(repo_nombre)
+
+    ruta_log = "logs/historial_procesos.md"
+
+    nueva_fila = f"| {fecha_proceso} | {n_basico:,} | {n_extendido:,} | {n_entidades:,} |\n"
+
+    try:
+        archivo = repo.get_contents(ruta_log, ref=branch)
+        contenido_actual = archivo.decoded_content.decode("utf-8")
+        contenido_nuevo = contenido_actual + nueva_fila
+        repo.update_file(
+            ruta_log,
+            f"📊 Log pipeline: {fecha_proceso}",
+            contenido_nuevo,
+            archivo.sha,
+            branch=branch,
+        )
+    except Exception:
+        encabezado = (
+            "# 📋 Historial de Procesos — CGR Risaralda\n\n"
+            "| Fecha | Contratos Básico | Contratos Extendido | Entidades |\n"
+            "|-------|-----------------|--------------------|-----------|\n"
+        )
+        repo.create_file(
+            ruta_log,
+            f"📊 Creación log pipeline: {fecha_proceso}",
+            encabezado + nueva_fila,
+            branch=branch,
+        )
+# ─────────────────────────────────────────────────────────────────────────────
+
+
 def actualizar_powerbi():
     email = os.getenv("POWERBI_EMAIL")
     password = os.getenv("POWERBI_PASSWORD")
@@ -494,6 +533,16 @@ if archivo_basico and archivo_extendido:
                 fecha_proceso = datetime.now(zona_colombia).strftime("%d/%m/%Y %H:%M")
                 with open(os.path.join(PROCESSED_PATH, "ultimo_proceso.txt"), "w") as f:
                     f.write(fecha_proceso)
+
+                # ── NUEVO: subir log de historial ─────────────────────────────
+                st.write("📋 Actualizando log de historial...")
+                push_log_a_github(
+                    fecha_proceso,
+                    len(df_basico),
+                    len(df_extendido),
+                    df_basico["ENTIDAD"].nunique(),
+                )
+                # ─────────────────────────────────────────────────────────────
 
                 sin_clasificar = (
                     df_basico["TIPO_DE_ENTIDAD"] == "NO CLASIFICADO"
