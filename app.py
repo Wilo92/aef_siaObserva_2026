@@ -16,13 +16,16 @@ except ImportError:
 
 sys.path.insert(0, os.path.dirname(__file__))
 
-from src.cleaners import aplicar_tipos_datos, TIPOS_BASICO, TIPOS_EXTENDIDO
-from src.analysis import calcular_duracion_vigencia
 from src.cleaners import (
+    aplicar_tipos_datos,
+    TIPOS_BASICO,
+    TIPOS_EXTENDIDO,
     estandarizar_modalidades,
     estandarizar_causales,
     estandarizar_recursos_v2,
+    validar_columnas_sia,
 )
+from src.analysis import calcular_duracion_vigencia
 from src.system import exportar_para_bi
 
 PROCESSED_PATH = os.path.join(os.path.dirname(__file__), "data", "processed_dinamico")
@@ -417,15 +420,11 @@ if archivo_basico and archivo_extendido:
                 df_basico = pd.read_excel(archivo_basico, skiprows=1)
                 df_extendido = pd.read_excel(archivo_extendido, skiprows=1)
 
-                faltantes_basico = {"NIT", "ENTIDAD", "VIGENCIA"} - set(df_basico.columns)
-                faltantes_extendido = {"NIT", "ENTIDAD", "VIGENCIA"} - set(df_extendido.columns)
-
-                if faltantes_basico or faltantes_extendido:
-                    if faltantes_basico:
-                        st.error(f"❌ Informe Básico sin columnas esperadas: {faltantes_basico}")
-                    if faltantes_extendido:
-                        st.error(f"❌ Informe Extendido sin columnas esperadas: {faltantes_extendido}")
-                    status.update(label="❌ Error de validación", state="error")
+                errores_validacion = validar_columnas_sia(df_basico, df_extendido)
+                if errores_validacion:
+                    for error in errores_validacion:
+                        st.error(f"❌ {error}")
+                    status.update(label="❌ Archivos no válidos", state="error")
                     st.stop()
 
                 st.write("⚙️ Ejecutando pipeline ETL...")
@@ -453,12 +452,7 @@ if archivo_basico and archivo_extendido:
                     "Informe_Extendido_Procesado.csv",
                 )
 
-                st.write("📊 Actualizando dashboard Power BI...")
-                ok, msg = actualizar_powerbi()
-                if ok:
-                    st.write("✅ Power BI notificado — el dashboard se actualizará en breve")
-                else:
-                    st.warning(f"⚠️ No se pudo notificar a Power BI: {msg}")
+
 
                 from datetime import datetime
                 fecha_proceso = datetime.now().strftime("%d/%m/%Y %H:%M")

@@ -13,6 +13,7 @@ from .cleaners import (
     asignar_tipo_entidad,
     renombrar_columnas_sia,
     RENOMBRAR_COLUMNAS,
+    validar_columnas_sia,
 )
 from .analysis import (
     calcular_alertas_adicion,

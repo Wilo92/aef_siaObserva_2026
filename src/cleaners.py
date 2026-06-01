@@ -159,6 +159,7 @@ TIPO_POR_ENTIDAD = {
     "HOSPITAL SANTA MONICA": "EMPRESAS SOCIALES DEL ESTADO",
     "INSTITUTO DE FOMENTO PARA EL DESARROLLO DE RISARALDA": "ESTABLECIMIENTO PUBLICOS",
     "INSTITUTO MUNICIPAL DE DEPORTE Y RECREACION INDER QUINCHIA": "ESTABLECIMIENTO PUBLICOS",
+    "CONTRALORIA DEPARTAMENTAL DE RISARALDA": "ENTE DE CONTROL",
 }
 
 
@@ -362,3 +363,80 @@ def estandarizar_recursos_v2(df):
     df["ORIGEN_RECURSOS_ESTANDAR"] = df["ORIGEN_RECURSOS"].apply(mapeo_profundo)
 
     return df
+
+
+# Columnas obligatorias tal como vienen de SIA Observa (antes de normalización)
+_COLS_REQUERIDAS_BASICO = {
+    "NIT",
+    "ENTIDAD",
+    "VIGENCIA",
+    "CÓDIGOCONTRATO",
+    "VALOR INICIALCONTRATO",
+    "ADICIONES",
+    "LIBERACIONES",
+    "VALOR VIGENTE",
+    "FECHASUSCRIPCION",
+    "FECHAACTA DE INICIO",
+    "FECHATERMINACION",
+    "TIEMPO EJECUCIÓN",
+    "MODALIDADCONTRATACIÓN",
+    "CAUSAL CONTRATO",
+    "TIPOCONTRATO",
+    "FECHACREACIÓN",
+    "FECHATERMINACIONAMPLIADA",
+    "NOMBRE",
+    "TIPO",
+    "ESTADOCONTRATO",
+}
+
+_COLS_REQUERIDAS_EXTENDIDO = {
+    "NIT",
+    "ENTIDAD",
+    "VIGENCIA",
+    "CÓDIGOCONTRATO",
+    "OBJETOCONTRATO",
+    "FECHASUSCRIPCION",
+    "FECHAACTA DE INICIO",
+    "FECHATERMINACION",
+    "TIEMPO EJECUCIÓN",
+    "VALOR INICIALCONTRATO",
+    "ADICIONES",
+    "LIBERACIONES",
+    "VALOR VIGENTE",
+    "MODALIDADCONTRATACIÓN",
+    "CAUSAL CONTRATO",
+    "TIPOCONTRATO",
+    "Nombre del Rubro",
+    "Apropiación Inicial",
+    "Origen Recursos",
+    "CDPS",
+    "RPS",
+    "FECHACREACIÓN",
+}
+
+
+def validar_columnas_sia(df_basico, df_extendido):
+    """
+    Valida que los DataFrames cargados correspondan a los reportes
+    oficiales de SIA Observa verificando sus columnas obligatorias.
+
+    Retorna una lista de mensajes de error. Si está vacía, los archivos son válidos.
+    """
+    errores = []
+
+    faltantes_b = _COLS_REQUERIDAS_BASICO - set(df_basico.columns)
+    faltantes_e = _COLS_REQUERIDAS_EXTENDIDO - set(df_extendido.columns)
+
+    if faltantes_b:
+        errores.append(
+            f"El Informe Básico no corresponde al reporte de SIA Observa — "
+            f"faltan {len(faltantes_b)} columna(s) obligatoria(s)."
+        )
+
+    if faltantes_e:
+        errores.append(
+            f"El Informe Extendido no corresponde al reporte de SIA Observa — "
+            f"faltan {len(faltantes_e)} columna(s) obligatoria(s)."
+        )
+
+    return errores
