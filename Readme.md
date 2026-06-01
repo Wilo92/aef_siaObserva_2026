@@ -1,7 +1,15 @@
-# Auditoría a la Contratación Pública 2025 - 53 sujetos de control.  
-## Contraloría General de Risaralda - Plataforma SIA Observa
+# 🏛️ Auditoría a la Contratación Pública 2025 — 53 Sujetos de Control
+## Contraloría General de Risaralda · Plataforma SIA Observa
 
-## Descripción general
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat&logo=python&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.45.1-FF4B4B?style=flat&logo=streamlit&logoColor=white)
+![Power BI](https://img.shields.io/badge/Power%20BI-F2C811?style=flat&logo=powerbi&logoColor=black)
+![Pandas](https://img.shields.io/badge/Pandas-2.2.3-150458?style=flat&logo=pandas&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-automatizado-181717?style=flat&logo=github&logoColor=white)
+
+---
+
+## 📌 Descripción General
 
 Este proyecto realiza un análisis técnico de la contratación pública reportada por los sujetos de control en la plataforma SIA Observa, con énfasis en la vigencia 2025.
 
@@ -9,11 +17,13 @@ El desarrollo se implementa en Python, utilizando Jupyter Notebook para el anál
 
 Su propósito es fortalecer el control fiscal, mejorar la trazabilidad de la información contractual y generar insumos que apoyen la priorización de procesos de auditoría.
 
-## Objetivo general
+---
+
+## 🎯 Objetivo General
 
 Analizar el comportamiento de la contratación pública reportada en SIA Observa para la vigencia 2025, con criterios de control fiscal y transparencia, a fin de identificar patrones relevantes, riesgos potenciales y oportunidades de mejora en la rendición de información.
 
-## Objetivos específicos
+## 🎯 Objetivos Específicos
 
 - Estandarizar y depurar los registros contractuales para mejorar su calidad y comparabilidad analítica.
 - Caracterizar la contratación pública según modalidad, tipo de contrato, entidad, origen de recursos y comportamiento temporal.
@@ -23,36 +33,36 @@ Analizar el comportamiento de la contratación pública reportada en SIA Observa
 - Producir conjuntos de datos limpios y estructurados, listos para su consumo en herramientas de visualización como Power BI.
 - Identificar los contratistas con mayor número de contratos, así como los montos y cuantías asociadas a su actividad contractual.
 
-## Alcance del análisis
+---
 
-- **Cobertura temática:** Información de contratación pública reportada en la plataforma SIA Observa, incluyendo los informes básico y extendido.
+## 📐 Alcance del Análisis
+
+- **Cobertura temática:** Información de contratación pública reportada en SIA Observa, incluyendo informes básico y extendido.
 - **Cobertura temporal:** Vigencia contractual 2025.
-- **Cobertura analítica:** Análisis descriptivo de la información, incluyendo agregaciones por variables clave, estandarización de categorías y generación de visualizaciones.
+- **Cobertura analítica:** Análisis descriptivo con agregaciones por variables clave, estandarización de categorías y visualizaciones.
 - **Propósito de uso:** Apoyar el ejercicio auditor y fortalecer la transparencia en la gestión contractual.
 
+---
 
+## 🗂️ Fuente de Datos
 
-## Fuente de datos
+La fuente principal corresponde a los reportes descargados desde **SIA Observa**, plataforma de rendición de información contractual de la Contraloría General de Risaralda para los 53 sujetos de control.
 
-La fuente principal corresponde a los reportes de contratación descargados desde **SIA Observa**, plataforma de rendición de información contractual de la Contraloria General del Risaralda para los 55 sujetos de control.
+| Archivo | Contenido | Ubicación |
+|---------|-----------|-----------|
+| `Informe_Contratos_Basico.xlsx` | Variables generales del contrato y estado de rendición | Descarga SIA Observa |
+| `Informe_Contratos_Extendido.xlsx` | Variables adicionales de objeto, recursos y rubros | Descarga SIA Observa |
 
-### Insumos usados en el proyecto
+### ⚠️ Consideraciones de la Fuente
 
-| Archivo | Contenido general | Ubicación |
-|---|---|---|
-| `Informe_Basico.xlsx` | Variables generales del contrato y estado de rendición | `data/raw/` |
-| `Informe_Extendido.xlsx` | Variables adicionales de objeto, recursos y rubros | `data/raw/` |
-
-### Consideraciones y posibles limitaciones de la fuente
-
-- La calidad de los resultados depende de la oportunidad y consistencia del cargue realizado por cada entidad.
+- La calidad depende de la oportunidad y consistencia del cargue por cada entidad.
 - Pueden existir registros actualizados de manera posterior al corte de análisis.
-- La rendición extemporánea puede alterar lecturas de temporalidad y oportunidad del reporte.
-- Diferencias de nomenclatura entre entidades requieren procesos de estandarización para análisis comparables.
+- La rendición extemporánea puede alterar lecturas de temporalidad y oportunidad.
+- Diferencias de nomenclatura entre entidades requieren procesos de estandarización.
 
-## Metodología
+---
 
-La metodología combina prácticas de analítica de datos con enfoque de auditoría pública:
+## 🔬 Metodología
 
 1. **Ingesta de datos:** lectura de archivos fuente en formato Excel.
 2. **Depuración y tipificación:** conversión de tipos de dato (texto, fechas, numéricos), control de nulos y normalización de encabezados.
@@ -61,7 +71,9 @@ La metodología combina prácticas de analítica de datos con enfoque de auditor
 5. **Alertas analíticas:** identificación de contratos con adiciones significativas y análisis de extemporaneidad en rendición.
 6. **Visualización y exportación:** generación de tablas y gráficas de lectura institucional, además de salidas en Excel.
 
-## Principales análisis realizados
+---
+
+## 📊 Principales Análisis
 
 - Conteo de contratos y sumatoria de valor vigente.
 - Distribución por modalidad de contratación (categoría estandarizada).
@@ -69,87 +81,140 @@ La metodología combina prácticas de analítica de datos con enfoque de auditor
 - Análisis por tipo de entidad y ranking por monto contratado.
 - Análisis por origen de recursos (categorías estandarizadas).
 - Identificación de contratos con adiciones y clasificación de alertas.
-- Medición de rendición extemporánea (días de diferencia entre creación en el sistema y acta de inicio del contrato) y resumen por entidad.
+- Medición de rendición extemporánea por entidad.
 
-## Estructura del proyecto
+---
 
-```text
-AUDITORIA_SIA/
-|- notebooks/
-|  `- analisis_contratacion_2026.ipynb
-|- data/
-|  |- raw/
-|  |  |- Informe_Basico.xlsx
-|  |  `- Informe_Extendido.xlsx
-|  `- processed/
-|- src/
-|  |- cleaners.py
-|  |- analysis.py
-|  |- formatters.py
-|  |- config.py
-|  |- environment.py
-|  |- system.py
-|  `- __init__.py
-|- requirements.txt
-`- README.md
+## ⚙️ Flujo del Pipeline Automatizado
+
+```
+Archivos SIA Observa (.xlsx)
+        ↓
+   Validación de columnas
+        ↓
+   Pipeline ETL
+   ├── Limpieza y tipificación de datos
+   ├── Estandarización de modalidades
+   ├── Estandarización de causales
+   ├── Estandarización de recursos
+   └── Cálculo de duración y vigencia
+        ↓
+   Exportación CSV procesados
+        ↓
+   Push automático a GitHub
+        ↓
+   Power BI se actualiza en tiempo real
 ```
 
-## Tecnologías utilizadas
+---
+
+## 📂 Estructura del Repositorio
+
+```
+aef_siaObserva_2026/
+├── app.py                              # Interfaz principal Streamlit
+├── requirements.txt                    # Dependencias del proyecto
+├── src/
+│   ├── cleaners.py                     # Limpieza y estandarización de datos
+│   ├── analysis.py                     # Cálculo de duraciones y vigencias
+│   ├── formatters.py                   # Formateo de salidas
+│   ├── config.py                       # Configuración del proyecto
+│   ├── environment.py                  # Variables de entorno
+│   ├── system.py                       # Exportación para Power BI
+│   └── __init__.py
+├── data/
+│   ├── processed/                      # CSVs del análisis notebook
+│   └── processed_dinamico/             # CSVs procesados (fuente Power BI)
+│       ├── Informe_Basico_Procesado.csv
+│       └── Informe_Extendido_Procesado.csv
+├── notebooks/
+│   └── analisis_contratacion_2026.ipynb
+├── logs/
+│   ├── historial_procesos.md           # Historial de cada ejecución
+│   └── ultimo_proceso.txt              # Fecha del último proceso
+└── assets/
+    └── logo.png                        # Logo CGR Risaralda
+```
+
+---
+
+## 📈 Dashboards Power BI
+
+| Dashboard | Descripción |
+|-----------|-------------|
+| [Tablero Oficial 2024](https://app.powerbi.com/view?r=eyJrIjoiOTdiMjNlMTktNzE1My00OWFlLWE2ZGMtMWYxYzVlM2RmMGUzIiwidCI6IjcxZTc1NWExLWI2ZjAtNDQyNC1hNGU1LTI1ZWQwZjY4NDhjZiIsImMiOjR9&pageName=edf64b1f73e863d583df) | Actuación Especial de Fiscalización 2024 |
+| [Tablero Oficial 2025](https://app.powerbi.com/view?r=eyJrIjoiNjhiMGZjMGUtZTUwZC00ZjYzLThjZmUtNjc5NTg5NTM1ZGIwIiwidCI6IjcxZTc1NWExLWI2ZjAtNDQyNC1hNGU1LTI1ZWQwZjY4NDhjZiIsImMiOjR9&pageName=c7af198a26c5edb2c43d) | Actuación Especial de Fiscalización 2025 |
+| [Dashboard Tiempo Real](https://app.powerbi.com/view?r=eyJrIjoiNDlkNDg4ZmUtY2E1NC00ZTAyLWEzOWItZTVkMGZjNjJkYjYyIiwidCI6IjcxZTc1NWExLWI2ZjAtNDQyNC1hNGU1LTI1ZWQwZjY4NDhjZiIsImMiOjR9&pageName=c7af198a26c5edb2c43d) | Datos dinámicos — se actualiza con cada proceso |
+
+---
+
+## 🚀 Cómo Usar la App Web
+
+1. Descarga los archivos desde **SIA Observa**:
+   - `Informe_Contratos_Basico.xlsx`
+   - `Informe_Contratos_Extendido.xlsx`
+2. Abre la aplicación Streamlit
+3. Carga los dos archivos en los campos correspondientes
+4. Haz clic en **⚙️ Procesar y Publicar**
+5. Espera a que el pipeline termine
+6. Abre el dashboard de Power BI y refresca
+
+## 💻 Cómo Ejecutar el Proyecto Localmente
+
+```bash
+# 1. Crear entorno virtual
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+
+# 2. Instalar dependencias
+pip install -r requirements.txt
+
+# 3. Ejecutar la app
+streamlit run app.py
+
+# 4. O ejecutar el notebook
+jupyter notebook notebooks/analisis_contratacion_2026.ipynb
+```
+
+---
+
+## 🛠️ Tecnologías Utilizadas
 
 - **Python 3.12**
-- **Jupyter Notebook**
-- **Pandas** (procesamiento y agregación de datos)
-- **NumPy** (operaciones numéricas)
-- **Matplotlib** (visualización)
-- **openpyxl / xlrd** (lectura y escritura de Excel)
+- **Streamlit 1.45.1** — interfaz web
+- **Pandas 2.2.3** — procesamiento y agregación
+- **NumPy** — operaciones numéricas
+- **Matplotlib / Seaborn / Plotly** — visualización
+- **openpyxl / XlsxWriter** — lectura y escritura Excel
+- **PyGithub** — integración automática con GitHub
+- **Power BI** — visualización interactiva
 
-## Cómo ejecutar el proyecto
+---
 
-### 1) Preparar entorno
+## 🕐 Última Actualización del Pipeline
 
-```bash
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
+**31/05/2026 22:30** (hora Colombia)
 
-### 2) Verificar insumos de datos
+## 📊 Estadísticas del Último Proceso
 
-- Ubicar `Informe_Basico.xlsx` y `Informe_Extendido.xlsx` en `data/raw/`.
-- Confirmar que los nombres de archivo coincidan con los esperados por el notebook.
+| Métrica | Valor |
+|---------|-------|
+| Contratos Básico procesados | 870 |
+| Contratos Extendido procesados | 870 |
+| Entidades analizadas | 38 |
 
-### 3) Ejecutar análisis
+---
 
-```bash
-jupyter notebook
-```
+## ✅ Conclusiones
 
-Luego abrir y ejecutar secuencialmente:
-
-- `notebooks/analisis_contratacion_2026.ipynb`
-
-### 4) Revisar resultados
-
-- Tablas y gráficas en el notebook.
-- Archivos exportados en `data/processed/` (según celdas de exportación ejecutadas).
-
-### 5) Visualización interactiva
-
-Los resultados de este análisis están disponibles en un tablero de Power BI de acceso público:
-
-[Ver tablero en Power BI] = https://app.powerbi.com/view?r=eyJrIjoiNjhiMGZjMGUtZTUwZC00ZjYzLThjZmUtNjc5NTg5NTM1ZGIwIiwidCI6IjcxZTc1NWExLWI2ZjAtNDQyNC1hNGU1LTI1ZWQwZjY4NDhjZiIsImMiOjR9&pageName=c7af198a26c5edb2c43d
-
-
-
-## Conclusiones
-
-El proyecto proporciona una base analítica reproducible para el seguimiento de la contratación pública reportada en SIA Observa.  
+El proyecto proporciona una base analítica reproducible para el seguimiento de la contratación pública reportada en SIA Observa.
 La estandarización de variables y la generación de alertas facilitan la identificación de patrones relevantes para priorizar actuaciones auditoras y robustecer la toma de decisiones institucionales.
 
+---
 
-## Autor
+## 👤 Autor
 
-**Wilmer Fidel Restrepo Orrego**  
-Técnico Operativo – Código 314-05  
+**Wilmer Fidel Restrepo Orrego**
+Técnico Operativo – Código 314-05
 Contraloria General del Risaralda
 Mayo de 2026
