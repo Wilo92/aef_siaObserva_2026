@@ -193,7 +193,7 @@ jupyter notebook notebooks/analisis_contratacion_2026.ipynb
 
 ## 🕐 Última Actualización del Pipeline
 
-**01/06/2026 08:22** (hora Colombia)
+**01/06/2026 09:10** (hora Colombia)
 
 ## 📊 Estadísticas del Último Proceso
 
