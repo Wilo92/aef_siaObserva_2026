@@ -785,11 +785,11 @@ if archivo_basico and archivo_extendido:
 
     if not nombre_basico_valido:
         st.error(
-            f"❌ El archivo básico debe llamarse **Informe_Contratos_Basico.xlsx** — recibido: `{archivo_basico.name}`"
+            f" El archivo básico debe llamarse **Informe_Contratos_Basico.xlsx** — recibido: `{archivo_basico.name}`"
         )
     if not nombre_extendido_valido:
         st.error(
-            f"❌ El archivo extendido debe llamarse **Informe_Contratos_Extendido.xlsx** — recibido: `{archivo_extendido.name}`"
+            f" El archivo extendido debe llamarse **Informe_Contratos_Extendido.xlsx** — recibido: `{archivo_extendido.name}`"
         )
 
     if nombre_basico_valido and nombre_extendido_valido:
@@ -800,7 +800,7 @@ if archivo_basico and archivo_extendido:
 
             with st.status("Procesando archivos...", expanded=True) as status:
 
-                st.write("📂 Leyendo las muestra de Sia Observa...")
+                st.write("Leyendo las muestra de Sia Observa...")
                 df_basico = pd.read_excel(archivo_basico, skiprows=1)
                 df_extendido = pd.read_excel(archivo_extendido, skiprows=1)
 
@@ -811,11 +811,11 @@ if archivo_basico and archivo_extendido:
                     status.update(label="Archivos no válidos", state="error")
                     st.stop()
 
-                st.write("⚙️ Ejecutando pipeline ETL...")
+                st.write("Ejecutando pipeline ETL...")
                 df_basico = procesar_pipeline(df_basico, TIPOS_BASICO)
                 df_extendido = procesar_pipeline(df_extendido, TIPOS_EXTENDIDO)
 
-                st.write("💾 Exportando los archivos procesados...")
+                st.write("Exportando los archivos procesados...")
                 exportar_para_bi(
                     {
                         "Informe_Basico_Procesado": df_basico,
@@ -826,7 +826,7 @@ if archivo_basico and archivo_extendido:
 
                 time.sleep(3)
 
-                st.write("🚀 Subiendo archivos a GitHub push automatico...")
+                st.write("Subiendo archivos a GitHub push automatico...")
                 push_a_github(
                     os.path.join(PROCESSED_PATH, "Informe_Basico_Procesado.csv"),
                     "Informe_Basico_Procesado.csv",
@@ -872,7 +872,7 @@ if archivo_basico and archivo_extendido:
                 ).sum()
                 if sin_clasificar > 0:
                     st.warning(
-                        f"⚠️ {sin_clasificar} entidades sin clasificar — revisar diccionario."
+                        f" {sin_clasificar} entidades sin clasificar — revisar diccionario."
                     )
 
                 status.update(
@@ -980,7 +980,7 @@ if archivo_basico and archivo_extendido:
             st.markdown("</div>", unsafe_allow_html=True)
 
 else:
-    st.info("⬆️ Carga los dos archivos Excel para habilitar el procesamiento.")
+    st.info("Carga los dos archivos Excel para habilitar el procesamiento.")
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown(
