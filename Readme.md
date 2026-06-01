@@ -1,4 +1,4 @@
-# 🏛️ Auditoría a la Contratación Pública 2025 — 53 Sujetos de Control
+# Auditoría a la Contratación Pública 2025
 ## Contraloría General de Risaralda · Plataforma SIA Observa
 
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat&logo=python&logoColor=white)
@@ -9,9 +9,9 @@
 
 ---
 
-## 📌 Descripción General
+## Descripción General
 
-Este proyecto realiza un análisis técnico de la contratación pública reportada por los sujetos de control en la plataforma SIA Observa, con énfasis en la vigencia 2025.
+Este proyecto realiza un análisis técnico de la contratación pública reportada por los sujetos de control en la plataforma SIA Observa.
 
 El desarrollo se implementa en Python, utilizando Jupyter Notebook para el análisis exploratorio y módulos especializados para la limpieza, estandarización y procesamiento de los datos.
 
@@ -19,11 +19,11 @@ Su propósito es fortalecer el control fiscal, mejorar la trazabilidad de la inf
 
 ---
 
-## 🎯 Objetivo General
+## Objetivo General
 
-Analizar el comportamiento de la contratación pública reportada en SIA Observa para la vigencia 2025, con criterios de control fiscal y transparencia, a fin de identificar patrones relevantes, riesgos potenciales y oportunidades de mejora en la rendición de información.
+Analizar el comportamiento de la contratación pública reportada en la plataforma SIA Observa, con criterios de control fiscal y transparencia, a fin de identificar patrones relevantes, riesgos potenciales y oportunidades de mejora en la rendición de información.
 
-## 🎯 Objetivos Específicos
+## Objetivos Específicos
 
 - Estandarizar y depurar los registros contractuales para mejorar su calidad y comparabilidad analítica.
 - Caracterizar la contratación pública según modalidad, tipo de contrato, entidad, origen de recursos y comportamiento temporal.
@@ -35,25 +35,25 @@ Analizar el comportamiento de la contratación pública reportada en SIA Observa
 
 ---
 
-## 📐 Alcance del Análisis
+## Alcance del Análisis
 
 - **Cobertura temática:** Información de contratación pública reportada en SIA Observa, incluyendo informes básico y extendido.
-- **Cobertura temporal:** Vigencia contractual 2025.
+- **Cobertura temporal:** Cualquier periodo.
 - **Cobertura analítica:** Análisis descriptivo con agregaciones por variables clave, estandarización de categorías y visualizaciones.
 - **Propósito de uso:** Apoyar el ejercicio auditor y fortalecer la transparencia en la gestión contractual.
 
 ---
 
-## 🗂️ Fuente de Datos
+## Fuente de Datos
 
-La fuente principal corresponde a los reportes descargados desde **SIA Observa**, plataforma de rendición de información contractual de la Contraloría General de Risaralda para los 53 sujetos de control.
+La fuente principal corresponde a los reportes descargados desde **SIA Observa**, plataforma de rendición de información contractual de la Contraloría General de Risaralda para todos sus sujetos de control.
 
 | Archivo | Contenido | Ubicación |
 |---------|-----------|-----------|
 | `Informe_Contratos_Basico.xlsx` | Variables generales del contrato y estado de rendición | Descarga SIA Observa |
 | `Informe_Contratos_Extendido.xlsx` | Variables adicionales de objeto, recursos y rubros | Descarga SIA Observa |
 
-### ⚠️ Consideraciones de la Fuente
+### Consideraciones de la Fuente
 
 - La calidad depende de la oportunidad y consistencia del cargue por cada entidad.
 - Pueden existir registros actualizados de manera posterior al corte de análisis.
@@ -62,7 +62,7 @@ La fuente principal corresponde a los reportes descargados desde **SIA Observa**
 
 ---
 
-## 🔬 Metodología
+## Metodología
 
 1. **Ingesta de datos:** lectura de archivos fuente en formato Excel.
 2. **Depuración y tipificación:** conversión de tipos de dato (texto, fechas, numéricos), control de nulos y normalización de encabezados.
@@ -73,7 +73,7 @@ La fuente principal corresponde a los reportes descargados desde **SIA Observa**
 
 ---
 
-## 📊 Principales Análisis
+## Principales Análisis
 
 - Conteo de contratos y sumatoria de valor vigente.
 - Distribución por modalidad de contratación (categoría estandarizada).
@@ -85,7 +85,7 @@ La fuente principal corresponde a los reportes descargados desde **SIA Observa**
 
 ---
 
-## ⚙️ Flujo del Pipeline Automatizado
+##  Flujo del Pipeline Automatizado
 
 ```
 Archivos SIA Observa (.xlsx)
@@ -108,11 +108,11 @@ Archivos SIA Observa (.xlsx)
 
 ---
 
-## 📂 Estructura del Repositorio
+## Estructura del Repositorio
 
 ```
 aef_siaObserva_2026/
-├── app.py                              # Interfaz principal Streamlit
+├── app.py                              # Interfaz principal vista para Streamlit
 ├── requirements.txt                    # Dependencias del proyecto
 ├── src/
 │   ├── cleaners.py                     # Limpieza y estandarización de datos
@@ -138,7 +138,7 @@ aef_siaObserva_2026/
 
 ---
 
-## 📈 Dashboards Power BI
+## Dashboards Power BI
 
 | Dashboard | Descripción |
 |-----------|-------------|
@@ -148,18 +148,18 @@ aef_siaObserva_2026/
 
 ---
 
-## 🚀 Cómo Usar la App Web
+## Cómo Usar la App Web
 
 1. Descarga los archivos desde **SIA Observa**:
    - `Informe_Contratos_Basico.xlsx`
    - `Informe_Contratos_Extendido.xlsx`
 2. Abre la aplicación Streamlit
 3. Carga los dos archivos en los campos correspondientes
-4. Haz clic en **⚙️ Procesar y Publicar**
+4. Haz clic en **Procesar y Publicar**
 5. Espera a que el pipeline termine
 6. Abre el dashboard de Power BI y refresca
 
-## 💻 Cómo Ejecutar el Proyecto Localmente
+## Cómo Ejecutar el Proyecto Localmente
 
 ```bash
 # 1. Crear entorno virtual
@@ -178,7 +178,7 @@ jupyter notebook notebooks/analisis_contratacion_2026.ipynb
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+## Tecnologías Utilizadas
 
 - **Python 3.12**
 - **Streamlit 1.45.1** — interfaz web
@@ -191,11 +191,11 @@ jupyter notebook notebooks/analisis_contratacion_2026.ipynb
 
 ---
 
-## 🕐 Última Actualización del Pipeline
+## Última Actualización del Pipeline
 
 **01/06/2026 09:10** (hora Colombia)
 
-## 📊 Estadísticas del Último Proceso
+## Estadísticas del Último Proceso
 
 | Métrica | Valor |
 |---------|-------|
@@ -205,16 +205,16 @@ jupyter notebook notebooks/analisis_contratacion_2026.ipynb
 
 ---
 
-## ✅ Conclusiones
+## Conclusiones
 
 El proyecto proporciona una base analítica reproducible para el seguimiento de la contratación pública reportada en SIA Observa.
 La estandarización de variables y la generación de alertas facilitan la identificación de patrones relevantes para priorizar actuaciones auditoras y robustecer la toma de decisiones institucionales.
 
 ---
 
-## 👤 Autor
+## Autor
 
 **Wilmer Fidel Restrepo Orrego**
 Técnico Operativo – Código 314-05
 Contraloria General del Risaralda
-Mayo de 2026
+Enero de 2026

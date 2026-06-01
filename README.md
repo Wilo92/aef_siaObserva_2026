@@ -1,4 +1,4 @@
-# 📋 Historial de Ejecuciones del Pipeline — CGR Risaralda
+# Historial de Ejecuciones del Pipeline — CGR Risaralda
 
 | Fecha | Contratos Básico | Contratos Extendido | Entidades |
 |-------|:---------------:|:------------------:|:---------:|
