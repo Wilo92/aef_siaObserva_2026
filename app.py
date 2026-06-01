@@ -381,20 +381,48 @@ Contraloria General del Risaralda
 Mayo de 2026
 """
 
+    # ── 1. Readme.md: descripción completa + stats dinámicas al final ──────────
     try:
-        archivo = repo.get_contents("README.md", ref=branch)
+        archivo = repo.get_contents("Readme.md", ref=branch)
         repo.update_file(
-            "README.md",
-            f"📝 README actualizado: {fecha_proceso}",
+            "Readme.md",
+            f"📝 Readme actualizado: {fecha_proceso}",
             contenido_readme,
             archivo.sha,
             branch=branch,
         )
     except Exception:
         repo.create_file(
-            "README.md",
-            f"📝 README inicial: {fecha_proceso}",
+            "Readme.md",
+            f"📝 Readme inicial: {fecha_proceso}",
             contenido_readme,
+            branch=branch,
+        )
+
+    # ── 2. README.md: historial de cada ejecución ─────────────────────────────
+    nueva_entrada = (
+        f"| {fecha_proceso} | {n_basico:,} | {n_extendido:,} | {n_entidades:,} |\n"
+    )
+    try:
+        archivo_hist = repo.get_contents("README.md", ref=branch)
+        contenido_actual = archivo_hist.decoded_content.decode("utf-8")
+        repo.update_file(
+            "README.md",
+            f"📋 Historial: {fecha_proceso}",
+            contenido_actual + nueva_entrada,
+            archivo_hist.sha,
+            branch=branch,
+        )
+    except Exception:
+        encabezado_hist = (
+            "# 📋 Historial de Ejecuciones del Pipeline — CGR Risaralda\n\n"
+            "| Fecha | Contratos Básico | Contratos Extendido | Entidades |\n"
+            "|-------|-----------------|--------------------|-----------||\n"
+        )
+        repo.create_file(
+            "README.md",
+            f"📋 Historial iniciado: {fecha_proceso}",
+            encabezado_hist + nueva_entrada,
             branch=branch,
         )
 # ─────────────────────────────────────────────────────────────────────────────
