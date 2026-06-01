@@ -83,7 +83,7 @@ def push_a_github(ruta_local, nombre_archivo):
             return False
 
 
-# ── NUEVO: Log de historial de procesos ──────────────────────────────────────
+# ── Log de historial de procesos ─────────────────────────────────────────────
 def push_log_a_github(fecha_proceso, n_basico, n_extendido, n_entidades):
     token = os.getenv("GITHUB_TOKEN")
     repo_nombre = os.getenv("GITHUB_REPO")
@@ -93,7 +93,6 @@ def push_log_a_github(fecha_proceso, n_basico, n_extendido, n_entidades):
     repo = g.get_repo(repo_nombre)
 
     ruta_log = "logs/historial_procesos.md"
-
     nueva_fila = f"| {fecha_proceso} | {n_basico:,} | {n_extendido:,} | {n_entidades:,} |\n"
 
     try:
@@ -117,6 +116,111 @@ def push_log_a_github(fecha_proceso, n_basico, n_extendido, n_entidades):
             ruta_log,
             f"📊 Creación log pipeline: {fecha_proceso}",
             encabezado + nueva_fila,
+            branch=branch,
+        )
+
+
+# ── Commit de ultimo_proceso.txt ─────────────────────────────────────────────
+def push_fecha_a_github(fecha_proceso):
+    token = os.getenv("GITHUB_TOKEN")
+    repo_nombre = os.getenv("GITHUB_REPO")
+    branch = os.getenv("GITHUB_BRANCH")
+
+    g = Github(token)
+    repo = g.get_repo(repo_nombre)
+
+    ruta_github = "logs/ultimo_proceso.txt"
+    contenido = fecha_proceso.encode("utf-8")
+
+    try:
+        archivo_existente = repo.get_contents(ruta_github, ref=branch)
+        repo.update_file(
+            ruta_github,
+            f"🕐 Último proceso: {fecha_proceso}",
+            contenido,
+            archivo_existente.sha,
+            branch=branch,
+        )
+    except Exception:
+        repo.create_file(
+            ruta_github,
+            f"🕐 Último proceso: {fecha_proceso}",
+            contenido,
+            branch=branch,
+        )
+
+
+# ── README dinámico ───────────────────────────────────────────────────────────
+def push_readme_a_github(fecha_proceso, n_basico, n_extendido, n_entidades):
+    token = os.getenv("GITHUB_TOKEN")
+    repo_nombre = os.getenv("GITHUB_REPO")
+    branch = os.getenv("GITHUB_BRANCH")
+
+    g = Github(token)
+    repo = g.get_repo(repo_nombre)
+
+    contenido_readme = f"""# 📋 Pipeline de Auditoría Contractual — CGR Risaralda
+
+> Sistema automatizado de procesamiento de datos de contratación pública.
+> Contraloría General de Risaralda · Grupo de Control Fiscal 2026
+
+---
+
+## 🕐 Última Actualización
+
+**{fecha_proceso}** (hora Colombia)
+
+## 📊 Estadísticas del Último Proceso
+
+| Métrica | Valor |
+|---------|-------|
+| Contratos Básico | {n_basico:,} |
+| Contratos Extendido | {n_extendido:,} |
+| Entidades | {n_entidades:,} |
+
+---
+
+## 🔗 Dashboards Power BI
+
+- [Tablero Oficial 2024]({URL_DASHBOARD_OFICIAL_1})
+- [Tablero Oficial 2025]({URL_DASHBOARD_OFICIAL_2})
+- [Dashboard en Tiempo Real]({URL_DASHBOARD_DINAMICO})
+
+---
+
+## ⚙️ Flujo del Pipeline
+
+```
+Archivos SIA Observa (.xlsx)
+        ↓
+   Validación de columnas
+        ↓
+   Pipeline ETL (limpieza, estandarización, duraciones)
+        ↓
+   Exportación CSV procesados
+        ↓
+   Push automático a GitHub → Power BI se actualiza
+```
+
+---
+
+*Actualizado automáticamente por el pipeline — @WILO*
+"""
+
+    try:
+        archivo = repo.get_contents("README.md", ref=branch)
+        repo.update_file(
+            "README.md",
+            f"📝 README actualizado: {fecha_proceso}",
+            contenido_readme,
+            archivo.sha,
+            branch=branch,
+        )
+    except Exception:
+        repo.create_file(
+            "README.md",
+            f"📝 README inicial: {fecha_proceso}",
+            contenido_readme,
             branch=branch,
         )
 # ─────────────────────────────────────────────────────────────────────────────
@@ -534,9 +638,22 @@ if archivo_basico and archivo_extendido:
                 with open(os.path.join(PROCESSED_PATH, "ultimo_proceso.txt"), "w") as f:
                     f.write(fecha_proceso)
 
-                # ── NUEVO: subir log de historial ─────────────────────────────
+                # ── NUEVO: log de historial ───────────────────────────────────
                 st.write("📋 Actualizando log de historial...")
                 push_log_a_github(
+                    fecha_proceso,
+                    len(df_basico),
+                    len(df_extendido),
+                    df_basico["ENTIDAD"].nunique(),
+                )
+
+                # ── NUEVO: commit de ultimo_proceso.txt ───────────────────────
+                st.write("🕐 Registrando fecha de proceso...")
+                push_fecha_a_github(fecha_proceso)
+
+                # ── NUEVO: README dinámico ────────────────────────────────────
+                st.write("📝 Actualizando README del repositorio...")
+                push_readme_a_github(
                     fecha_proceso,
                     len(df_basico),
                     len(df_extendido),
