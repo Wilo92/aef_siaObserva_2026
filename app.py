@@ -532,6 +532,6 @@ else:
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="footer-cgr">
-    © 2026 CGR Risaralda &nbsp;·&nbsp; Pipeline de Auditoría Contractual &nbsp;·&nbsp; Desarrollado por @wilo
+    © 2026 CGR Risaralda &nbsp;·&nbsp; Pipeline de Auditoría Contractual &nbsp;·&nbsp; @WILO
 </div>
 """, unsafe_allow_html=True)
