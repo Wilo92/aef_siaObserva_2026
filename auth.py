@@ -26,27 +26,25 @@ def autenticar():
         }
     }
 
-    authenticator = stauth.Authenticate(
-        credentials,
-        "cgr_cookie_v1",
-        "cgr_key_2026",
-        30,
-    )
-
-    st.write("ANTES AUTH")
+    st.write(credentials)
 
     try:
-        authenticator.login()
-        st.write("DESPUES AUTH")
+        authenticator = stauth.Authenticate(
+            credentials,
+            "cgr_cookie_v1",
+            "cgr_key_2026",
+            30,
+        )
+
+        st.write("AUTH CREADO")
+
+        resultado = authenticator.login()
+
+        st.write("LOGIN EJECUTADO")
+        st.write(resultado)
+
     except Exception as e:
-        st.error(f"ERROR AUTH: {e}")
-
-    if st.session_state.get("authentication_status"):
-        authenticator.logout("Cerrar sesión", "sidebar")
-        return True
-
-    if st.session_state.get("authentication_status") is False:
-        st.error("Usuario o contraseña incorrectos")
+        st.error(f"ERROR: {e}")
         return False
 
     return False

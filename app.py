@@ -11,7 +11,8 @@ from auth import autenticar
 
 import streamlit_authenticator as stauth
 
-st.write("VERSION:", stauth.__version__)
+st.write(stauth)
+st.write(dir(stauth))
 
 try:
     from dotenv import load_dotenv
