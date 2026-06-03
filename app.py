@@ -497,6 +497,9 @@ st.set_page_config(
     layout="centered",
 )
 
+st.error("PRUEBA LOGIN")
+st.stop()
+
 if not autenticar():
     st.stop()
 

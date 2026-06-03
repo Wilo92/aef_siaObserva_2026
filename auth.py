@@ -25,12 +25,11 @@ def autenticar():
             },
         }
     }
-    st.write("DEBUG CREDENTIALS")
-    st.write(credentials)
+   
 
     authenticator = stauth.Authenticate(
         credentials,
-        "cgr_cookie_v2",
+        "cgr_cookie",
         "cgr_key_2026",
         30,
     )
