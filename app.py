@@ -7,6 +7,7 @@ import time
 import base64
 import requests
 from github import Github
+from auth import autenticar
 
 try:
     from dotenv import load_dotenv
@@ -93,7 +94,9 @@ def push_log_a_github(fecha_proceso, n_basico, n_extendido, n_entidades):
     repo = g.get_repo(repo_nombre)
 
     ruta_log = "logs/historial_procesos.md"
-    nueva_fila = f"| {fecha_proceso} | {n_basico:,} | {n_extendido:,} | {n_entidades:,} |\n"
+    nueva_fila = (
+        f"| {fecha_proceso} | {n_basico:,} | {n_extendido:,} | {n_entidades:,} |\n"
+    )
 
     try:
         archivo = repo.get_contents(ruta_log, ref=branch)
@@ -400,7 +403,9 @@ Mayo de 2026
         )
 
     # ── 2. README.md: historial de cada ejecución ─────────────────────────────
-    nueva_entrada = f"| {fecha_proceso} | {n_basico:,} | {n_extendido:,} | {n_entidades:,} |\n"
+    nueva_entrada = (
+        f"| {fecha_proceso} | {n_basico:,} | {n_extendido:,} | {n_entidades:,} |\n"
+    )
     encabezado_hist = (
         "# Historial de Ejecuciones del Pipeline — CGR Risaralda\n\n"
         "| Fecha | Contratos Básico | Contratos Extendido | Entidades |\n"
@@ -429,6 +434,8 @@ Mayo de 2026
             encabezado_hist + nueva_entrada,
             branch=branch,
         )
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 
 
@@ -489,6 +496,9 @@ st.set_page_config(
     page_icon="assets/logo.png",
     layout="centered",
 )
+
+if not autenticar():
+    st.stop()
 
 logo_b64 = get_logo_base64()
 

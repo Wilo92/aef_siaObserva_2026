@@ -9,4 +9,5 @@ ipykernel==6.29.5
 streamlit==1.45.1
 PyGithub==2.3.0
 python-dotenv==1.0.1
+streamlit-authenticator==0.4.2
 
