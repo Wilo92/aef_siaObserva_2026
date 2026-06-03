@@ -25,7 +25,6 @@ def autenticar():
             },
         }
     }
-   
 
     authenticator = stauth.Authenticate(
         credentials,
@@ -34,7 +33,11 @@ def autenticar():
         30,
     )
 
+    st.write("ANTES LOGIN")
+
     authenticator.login()
+
+    st.write("DESPUES LOGIN")
 
     if st.session_state.get("authentication_status"):
         authenticator.logout("Cerrar sesión", "sidebar")
