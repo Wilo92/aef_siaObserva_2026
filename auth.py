@@ -29,7 +29,7 @@ def autenticar():
 
     authenticator = stauth.Authenticate(
         credentials,
-        "cgr_cookie",
+        "cgr_cookie_v1",
         "cgr_key_2026",
         30,
     )
