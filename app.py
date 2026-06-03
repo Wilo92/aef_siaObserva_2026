@@ -9,6 +9,10 @@ import requests
 from github import Github
 from auth import autenticar
 
+import streamlit_authenticator as stauth
+
+st.write("VERSION:", stauth.__version__)
+
 try:
     from dotenv import load_dotenv
 

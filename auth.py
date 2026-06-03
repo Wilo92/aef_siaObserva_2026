@@ -33,11 +33,13 @@ def autenticar():
         30,
     )
 
-    st.write("ANTES LOGIN")
+    st.write("ANTES AUTH")
 
-    authenticator.login()
-
-    st.write("DESPUES LOGIN")
+    try:
+        authenticator.login()
+        st.write("DESPUES AUTH")
+    except Exception as e:
+        st.error(f"ERROR AUTH: {e}")
 
     if st.session_state.get("authentication_status"):
         authenticator.logout("Cerrar sesión", "sidebar")
